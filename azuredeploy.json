@@ -1,0 +1,421 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "projectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies a name for generating resource names."
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_B2ms",
+            "metadata": {
+                "description": "Specifies the size of the VM to use. See https://docs.microsoft.com/en-us/azure/virtual-machines/sizes"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Specifies the location for all resources."
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies a username for the Virtual Machine."
+            }
+        },
+        "adminPublicKey": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the SSH rsa public key file as a string. Use \"ssh-keygen -t rsa -b 2048\" to generate your SSH key pairs."
+            }
+        },
+        "javaPackageName": {
+            "type": "string",
+            "defaultValue": "java-11-openjdk-devel",
+            "allowedValues": [
+                "java-11-openjdk-devel"
+            ],
+            "metadata": {
+                "description": "java Package Name"
+            }
+        },
+        "tomcatDownloadUri": {
+            "type": "string",
+            "defaultValue": "https://apache.claz.org/tomcat/tomcat-9/v9.0.35/bin/apache-tomcat-9.0.35.tar.gz",
+            "metadata": {
+                "description": "The full URI from where a Tomcat .tar.gz file can be downloaded."
+            }
+        },
+        "tomcatVersion": {
+            "type": "string",
+            "defaultValue": "9.0.35",
+            "metadata": {
+                "description": "The full version number of Tomcat that is installed. E.g. 9.0.37"
+            }
+        },
+        "installScriptUri": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/indranil-chakraborty-thd/azure-quickstart-templates/indranil-chakraborty-thd/openjdk-tomcat-rhel7-vm/openjdk-tomcat-rhel7-vm/java-tomcat-install.sh",
+            "metadata": {
+                "description": "The URI of the script run post VM creation to install Java and Tomcat"
+            }
+        },
+        "sqlAdministratorLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "The administrator username of the SQL Server."
+            }
+        },
+        "sqlAdministratorLoginPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The administrator password of the SQL Server."
+            }
+        },
+        "transparentDataEncryption": {
+            "type": "string",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ],
+            "defaultValue": "Enabled",
+            "metadata": {
+                "description": "Enable or disable Transparent Data Encryption (TDE) for the database."
+            }
+        },
+        "publicNetworkAccess": {
+            "type": "string",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ],
+            "defaultValue": "Enabled",
+            "metadata": {
+                "description": "Enable or disable Public Network Access. See https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.management.sql.models.server.publicnetworkaccess?view=azure-dotnet"
+            }
+        }
+    },
+    "variables": {
+        "vNetName": "[concat(parameters('projectName'), '-vnet')]",
+        "vNetAddressPrefixes": "10.0.0.0/20",
+        "vNetSubnetName": "default",
+        "vNetSubnetAddressPrefix": "10.0.0.0/24",
+        "vmName": "[concat(parameters('projectName'), '-vm')]",
+        "publicIPAddressName": "[concat(parameters('projectName'), '-ip')]",
+        "networkInterfaceName": "[concat(parameters('projectName'), '-nic')]",
+        "networkSecurityGroupName": "[concat(parameters('projectName'), '-nsg')]",
+        "networkSecurityGroupName2": "[concat(variables('vNetSubnetName'), '-nsg')]",
+        "sqlServerName": "[concat('azure-sql-db-', parameters('projectName'))]",
+        "identityiqDatabaseName": "identityiq",
+        "identityiqPluginDatabaseName": "identityiqPlugin",
+        "databaseEdition": "Basic",
+        "databaseCollation": "SQL_Latin1_General_CP1_CI_AS",
+        "databaseServiceObjectiveName": "Basic"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-11-01",
+            "name": "[variables('networkSecurityGroupName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "ssh_rule",
+                        "properties": {
+                            "description": "Locks inbound down to ssh default port 22.",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 123,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2018-11-01",
+            "name": "[variables('publicIPAddressName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            },
+            "sku": {
+                "name": "Basic"
+            }
+        },
+        {
+            "comments": "Simple Network Security Group for subnet [variables('vNetSubnetName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-08-01",
+            "name": "[variables('networkSecurityGroupName2')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-22",
+                        "properties": {
+                            "priority": 1000,
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "destinationPortRange": "22",
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2018-11-01",
+            "name": "[variables('vNetName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName2'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('vNetAddressPrefixes')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('vNetSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('vNetSubnetAddressPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName2'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-11-01",
+            "name": "[variables('networkInterfaceName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('vNetName'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('vNetSubnetName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-10-01",
+            "name": "[variables('vmName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                                    "keyData": "[parameters('adminPublicKey')]"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "RedHat",
+                        "offer": "RHEL",
+                        "sku": "7-LVM",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "fromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('vmName'),'/installscript')]",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[parameters('installScriptUri')]"
+                    ],
+                    "commandToExecute": "[concat('sh java-tomcat-install.sh',' ',parameters('javaPackageName'),' ',parameters('tomcatDownloadUri'), ' ',parameters('tomcatVersion'))]"
+                }
+            }
+        },
+        {
+            "name": "[variables('sqlServerName')]",
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2019-06-01-preview",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "SqlServer"
+            },
+            "properties": {
+                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+                "version": "12.0",
+                "minimalTlsVersion": "1.2",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
+            },
+            "resources": [
+                {
+                    "name": "[variables('identityiqDatabaseName')]",
+                    "type": "databases",
+                    "apiVersion": "2019-06-01-preview",
+                    "location": "[parameters('location')]",
+                    "tags": {
+                        "displayName": "Database"
+                    },
+                    "sku": {
+                        "name": "Standard",
+                        "tier": "Standard",
+                        "capacity": 10
+                    },
+                    "properties": {
+                        "edition": "[variables('databaseEdition')]",
+                        "collation": "[variables('databaseCollation')]",
+                        "requestedServiceObjectiveName": "[variables('databaseServiceObjectiveName')]"
+                    },
+                    "dependsOn": [
+                        "[variables('sqlServerName')]"
+                    ],
+                    "resources": [
+                        {
+                            "comments": "Transparent Data Encryption",
+                            "name": "current",
+                            "type": "transparentDataEncryption",
+                            "apiVersion": "2014-04-01-preview",
+                            "properties": {
+                                "status": "[parameters('transparentDataEncryption')]"
+                            },
+                            "dependsOn": [
+                                "[variables('identityiqDatabaseName')]"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "[variables('identityiqPluginDatabaseName')]",
+                    "type": "databases",
+                    "apiVersion": "2019-06-01-preview",
+                    "location": "[parameters('location')]",
+                    "tags": {
+                        "displayName": "Database"
+                    },
+                    "sku": {
+                        "name": "Standard",
+                        "tier": "Standard",
+                        "capacity": 10
+                    },
+                    "properties": {
+                        "edition": "[variables('databaseEdition')]",
+                        "collation": "[variables('databaseCollation')]",
+                        "requestedServiceObjectiveName": "[variables('databaseServiceObjectiveName')]"
+                    },
+                    "dependsOn": [
+                        "[variables('sqlServerName')]"
+                    ],
+                    "resources": [
+                        {
+                            "comments": "Transparent Data Encryption",
+                            "name": "current",
+                            "type": "transparentDataEncryption",
+                            "apiVersion": "2014-04-01-preview",
+                            "properties": {
+                                "status": "[parameters('transparentDataEncryption')]"
+                            },
+                            "dependsOn": [
+                                "[variables('identityiqPluginDatabaseName')]"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "AllowAllMicrosoftAzureIps",
+                    "type": "firewallrules",
+                    "apiVersion": "2015-05-01-preview",
+                    "location": "[parameters('location')]",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    },
+                    "dependsOn": [
+                        "[variables('sqlServerName')]"
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "adminUsername": {
+            "type": "string",
+            "value": "[parameters('adminUsername')]"
+        },
+        "sqlServerFqdn": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName]"
+        },
+        "identityiqDatabaseName": {
+            "type": "string",
+            "value": "[variables('identityiqDatabaseName')]"
+        }
+    }
+}
