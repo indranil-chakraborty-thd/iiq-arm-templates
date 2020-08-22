@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment": {
+            "value": "sandbox"
+        },
+        "adminUsername": {
+            "value": "ixc5ffg"
+        },
+        "adminPublicKey": {
+            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCh6B/KgJjeAeaINgcgN5LUNG+HpPi6sV8XTldohDwrs7ogb0L4Zcw88RdWaFOxvo55jMB0jy/P2wusmfhmsZc7KRq8i7EAOAbhs9BvpWuwEiEujODo4auAzEM6W+UfvLjs8V/ZfJcAbJq7//ugmwVcPgrRkoImpdudgaQ0+OS/EDOxV2Js4F5j0IGJikaqV2VDrnrucxDqEHkPcJMIs2g9DMUr4Q1hsk5KoI/09kIzsasyB8k8DigfrucyJS2KwmJQke9COnQ8d6O7IqMRUflfiQ2WbZp2AmLxEF90G3KZEzz24ngrka4ZZpUq0m4eIYiZz913Nru1wlxhY0oEej1 IXC5FFG@C9556EBA44D0E4"
+        },
+        "tomcatDownloadUri": {
+            "value": "https://apache.claz.org/tomcat/tomcat-9/v9.0.37/bin/apache-tomcat-9.0.37.tar.gz"
+        },
+        "tomcatVersion": {
+            "value": "9.0.37"
+        }
+    }
+}
