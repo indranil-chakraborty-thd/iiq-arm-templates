@@ -1,0 +1,82 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "templateBaseUrl": "https://raw.githubusercontent.com/indranil-chakraborty-thd/iiq-arm-templates/arm-template-tutorial-6/",
+        "sharedResourcesTemplateUrl": "[uri(variables('templateBaseUrl'), 'sharedResources.json')]",
+        "sharedResourcesParametersUrl": "[uri(variables('templateBaseUrl'), 'sharedResources.parameters.json')]",
+        "azureSqlDatabaseTemplateUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.json')]",
+        "azureSqlDatabaseParametersUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.parameters.json')]",
+        "iiqDatabasesTemplateUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.json')]",
+        "iiqDatabasesParametersUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.parameters.json')]",
+        "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.json')]",
+        "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.parameters.json')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "sharedResourcesTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sharedResourcesTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('sharedResourcesParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "dbResourcesTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('azureSqlDatabaseTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('azureSqlDatabaseParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "iiqDatabasesTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('iiqDatabasesTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('iiqDatabasesParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "vmTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('vmParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        }
+    ]
+}

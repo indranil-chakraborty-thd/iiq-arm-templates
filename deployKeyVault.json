@@ -8,14 +8,7 @@
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
-        },
-        "githubPersonalAccessToken": {
-            "type": "securestring",
-            "metadata": {
-                "description": "A GitHub Personal Access Token to be saved as a secret in the vault so other templates can be fetched via a URI."
-            }
         }
-
     },
     "variables": {
         "vaultName": "[concat(parameters('projectName'), '-vault')]",
@@ -92,17 +85,6 @@
             ],
             "properties": {
                 "value": "[variables('sqlAdministratorLoginPasswordValue')]"
-            }
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "[concat(variables('vaultName'), '/','githubPersonalAccessToken')]",
-            "apiVersion": "2016-10-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
-            ],
-            "properties": {
-                "value": "[parameters('githubPersonalAccessToken')]"
             }
         }
     ]

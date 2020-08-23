@@ -69,7 +69,7 @@
                             "comments": "Transparent Data Encryption",
                             "name": "current",
                             "type": "transparentDataEncryption",
-                            "apiVersion": "2014-04-01",
+                            "apiVersion": "2019-06-01-preview",
                             "properties": {
                                 "status": "[parameters('transparentDataEncryption')]"
                             },
@@ -105,7 +105,7 @@
                             "comments": "Transparent Data Encryption",
                             "name": "current",
                             "type": "transparentDataEncryption",
-                            "apiVersion": "2014-04-01",
+                            "apiVersion": "2019-06-01-preview",
                             "properties": {
                                 "status": "[parameters('transparentDataEncryption')]"
                             },
