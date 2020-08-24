@@ -5,6 +5,24 @@
         "environment": {
             "value": "sandbox"
         },
+        "vNetAddressPrefixes": {
+            "value": "10.124.0.0/25"
+        },
+        "dbSubnetAddressPrefix": {
+            "value": "10.124.0.16/28"
+        },
+        "appSubnetAddressPrefix": {
+            "value": "10.124.0.32/28"
+        },
+        "secretName": {
+            "value": "sqlAdministratorLoginPassword"
+        },
+        "dbInstances": {
+            "value": [
+                "identityiq",
+                "identityiqPlugin"
+            ]
+        },
         "adminUsername": {
             "value": "ixc5ffg"
         },
