@@ -63,7 +63,7 @@
                         "value": "[parameters('environment')]"
                     },
                     "sqlAdministratorLogin": {
-                        "value": "ghuser"
+                        "value": "[concat(parameters('environment'), '-sql-admin')]"
                     },
                     "sqlAdministratorLoginPassword": {
                         "reference": {
