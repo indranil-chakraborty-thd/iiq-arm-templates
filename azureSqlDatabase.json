@@ -47,6 +47,9 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "dynamicSecret",
+            "dependsOn": [
+                "[resourceId(parameters('vaultSubscription'), parameters('vaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('vaultName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "expressionEvaluationOptions": {
@@ -65,54 +68,54 @@
                     "sqlAdministratorLoginPassword": {
                         "reference": {
                             "keyVault": {
-                                "id": "[resourceId(parameters('vaultSubscription'), parameters('vaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('vaultName'))]"
+                                "id": "[reference('keyVaultTemplate').outputs.keyVaultResourceId.value]"
                             },
                             "secretName": "[parameters('secretName')]"
                         }
-                    }
-                },
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                        "sqlAdministratorLogin": {
-                            "type": "string"
-                        },
-                        "sqlAdministratorLoginPassword": {
-                            "type": "securestring"
-                        },
-                        "location": {
-                            "type": "string"
-                        },
-                        "environment": {
-                            "type": "string"
-                        }
+
                     },
-                    "variables": {
-                        "sqlServerName": "[concat(parameters('environment'), '-azure-sql-instance')]"
-                    },
-                    "resources": [
-                        {
-                            "type": "Microsoft.Sql/servers",
-                            "apiVersion": "2019-06-01-preview",
-                            "name": "[variables('sqlServerName')]",
-                            "location": "[parameters('location')]",
-                            "properties": {
-                                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
-                                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
-                                "version": "12.0",
-                                "minimalTlsVersion": "1.2"
+                    "template": {
+                        "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "parameters": {
+                            "sqlAdministratorLogin": {
+                                "type": "string"
+                            },
+                            "sqlAdministratorLoginPassword": {
+                                "type": "securestring"
+                            },
+                            "location": {
+                                "type": "string"
+                            },
+                            "environment": {
+                                "type": "string"
                             }
-                        }
-                    ],
-                    "outputs": {
-                        "sqlFQDN": {
-                            "type": "string",
-                            "value": "[reference(variables('sqlServerName')).fullyQualifiedDomainName]"
+                        },
+                        "variables": {
+                            "sqlServerName": "[concat(parameters('environment'), '-azure-sql-instance')]"
+                        },
+                        "resources": [
+                            {
+                                "type": "Microsoft.Sql/servers",
+                                "apiVersion": "2019-06-01-preview",
+                                "name": "[variables('sqlServerName')]",
+                                "location": "[parameters('location')]",
+                                "properties": {
+                                    "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+                                    "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+                                    "version": "12.0",
+                                    "minimalTlsVersion": "1.2"
+                                }
+                            }
+                        ],
+                        "outputs": {
+                            "sqlFQDN": {
+                                "type": "string",
+                                "value": "[reference(variables('sqlServerName')).fullyQualifiedDomainName]"
+                            }
                         }
                     }
                 }
             }
-        }
     ]
 }

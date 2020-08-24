@@ -64,27 +64,11 @@
                     "uri": "[variables('azureSqlDatabaseParameterUrl')]",
                     "contentVersion": "1.0.0.0"
                 }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": "iiqDatabasesTemplate",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('iiqDatabasesTemplateUrl')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parametersLink": {
-                    "uri": "[variables('iiqDatabasesParametersUrl')]",
-                    "contentVersion": "1.0.0.0"
-                }
             },
-            "dependsOn": [
-                "azureSqlDatabaseTemplate"
-            ]
+            "dependsOn": [ "keyVaultTemplate" ]
+
         },
+
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",

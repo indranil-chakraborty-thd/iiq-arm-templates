@@ -87,5 +87,11 @@
                 "value": "[variables('sqlAdministratorLoginPasswordValue')]"
             }
         }
-    ]
+    ],
+    "outputs": {
+        "keyVaultResourceId": {
+            "value": "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]",
+            "type": "string"
+        }
+    }
 }
