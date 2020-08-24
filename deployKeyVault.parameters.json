@@ -4,15 +4,6 @@
     "parameters": {
         "environment": {
             "value": "sandbox"
-        },
-        "secretName": {
-            "value": "sqlAdministratorLoginPassword"
-        },
-        "dbInstances": {
-            "value": [
-                "identityiq",
-                "identityiqPlugin"
-            ]
         }
     }
 }
