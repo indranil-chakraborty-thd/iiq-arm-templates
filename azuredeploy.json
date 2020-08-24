@@ -1,28 +1,33 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "The environment being built. Effectively serves as a prefix for all resources."
+            }
+        }
+    },
     "variables": {
         "templateBaseUrl": "https://raw.githubusercontent.com/indranil-chakraborty-thd/iiq-arm-templates/arm-template-tutorial-7/",
-        "templateParametersUrl": "[uri(variables('templateBaseUrl'), 'azuredeploy.parameters.json')]", 
         "keyVaultTemplateUrl": "[uri(variables('templateBaseUrl'), 'deployKeyVault.json')]",
         "networkingTemplateUrl": "[uri(variables('templateBaseUrl'), 'networking.json')]",
+        "networkingParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
         "iiqDatabasesTemplateUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.json')]",
+        "iiqDatabasesParametersUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.parameters.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.json')]",
+        "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.parameters.json')]"
     },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "keyVaultTemplate",
-            "properties": {
+            "properties": {               
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[variables('keyVaultTemplateUrl')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parametersLink": {
-                    "uri": "[variables('templateParametersUrl')]",
                     "contentVersion": "1.0.0.0"
                 }
             }
@@ -38,7 +43,7 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
-                    "uri": "[variables('templateParametersUrl')]",
+                    "uri": "[variables('networkingParametersUrl')]",
                     "contentVersion": "1.0.0.0"
                 }
             }
@@ -54,14 +59,10 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
-                    "uri": "[variables('templateParametersUrl')]",
+                    "uri": "[variables('iiqDatabasesParametersUrl')]",
                     "contentVersion": "1.0.0.0"
                 }
-            },
-            "dependsOn": [
-                "keyVaultTemplate",
-                "networkingTemplate"
-            ]
+            }
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -74,13 +75,10 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
-                    "uri": "[variables('templateParametersUrl')]",
+                    "uri": "[variables('vmParametersUrl')]",
                     "contentVersion": "1.0.0.0"
                 }
-            },
-            "dependsOn": [
-                "networkingTemplate"
-            ]
+            }
         }
     ]
 }
