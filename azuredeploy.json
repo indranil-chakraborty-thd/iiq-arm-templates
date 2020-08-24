@@ -8,8 +8,6 @@
         "keyVaultParamtersUrl":"[uri(variables('templateBaseUrl'), 'delpoyKeyVaultParamters.json')]",
         "sharedResourcesTemplateUrl": "[uri(variables('templateBaseUrl'), 'networking.json')]",
         "sharedResourcesParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
-        "azureSqlDatabaseTemplateUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.json')]",
-        "azureSqlDatabaseParametersUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.parameters.json')]",
         "iiqDatabasesTemplateUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.json')]",
         "iiqDatabasesParametersUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.parameters.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.json')]",
