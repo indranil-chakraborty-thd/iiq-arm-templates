@@ -46,10 +46,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "dynamicSecret",
-            "dependsOn": [
-                "[resourceId(parameters('vaultSubscription'), parameters('vaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('vaultName'))]"
-            ],
+            "name": "dynamicSecret",            
             "properties": {
                 "mode": "Incremental",
                 "expressionEvaluationOptions": {
