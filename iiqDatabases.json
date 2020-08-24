@@ -5,7 +5,7 @@
         "environment": {
             "type": "string",
             "metadata": {
-                "description": "A moniker for the environment. Effectively serves as a prefix for all resources deployed by these templates."
+                "description": "A moniker for the fataan. Effectively serves as a prefix for all resources deployed by these templates."
             }
         },
         "location": {
@@ -13,34 +13,6 @@
             "defaultValue": "[resourceGroup().location]",
             "metadata": {
                 "description": "Specifies the location for all resources."
-            }
-        },
-        "vaultName": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('environment'),'-vault')]",
-            "metadata": {
-                "description": "The name of the keyvault that contains the secret."
-            }
-        },
-        "secretName": {
-            "type": "string",
-            "defaultValue": "sqlAdministratorLoginPassword",
-            "metadata": {
-                "description": "The name of the secret."
-            }
-        },
-        "vaultResourceGroupName": {
-            "type": "string",
-            "defaultValue":"[resourceGroup().name]",
-            "metadata": {
-                "description": "The name of the resource group that contains the keyvault."
-            }
-        },
-        "vaultSubscription": {
-            "type": "string",
-            "defaultValue": "[subscription().subscriptionId]",
-            "metadata": {
-                "description": "The name of the subscription that contains the keyvault."
             }
         },
         "dbInstances": {
@@ -56,78 +28,7 @@
         "databaseCollation": "SQL_Latin1_General_CP1_CI_AS",
         "databaseServiceObjectiveName": "Basic"
     },
-    "resources": [
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": "dynamicSecret",
-            "properties": {
-                "mode": "Incremental",
-                "expressionEvaluationOptions": {
-                    "scope": "inner"
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "environment": {
-                        "value": "[parameters('environment')]"
-                    },
-                    "sqlAdministratorLogin": {
-                        "value": "[concat(parameters('environment'), '-sql-admin')]"
-                    },
-                    "sqlAdministratorLoginPassword": {
-                        "reference": {
-                            "keyVault": {
-                                "id": "[resourceId(parameters('vaultSubscription'), parameters('vaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('vaultName'))]"
-                            },
-                            "secretName": "[parameters('secretName')]"
-                        }
-                    }
-                },
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                        "sqlAdministratorLogin": {
-                            "type": "string"
-                        },
-                        "sqlAdministratorLoginPassword": {
-                            "type": "securestring"
-                        },
-                        "location": {
-                            "type": "string"
-                        },
-                        "environment": {
-                            "type": "string"
-                        }
-                    },
-                    "variables": {
-                        "sqlServerName": "[concat(parameters('environment'), '-azure-sql-instance')]"
-                    },
-                    "resources": [
-                        {
-                            "type": "Microsoft.Sql/servers",
-                            "apiVersion": "2019-06-01-preview",
-                            "name": "[variables('sqlServerName')]",
-                            "location": "[parameters('location')]",
-                            "properties": {
-                                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
-                                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
-                                "version": "12.0",
-                                "minimalTlsVersion": "1.2"
-                            }
-                        }
-                    ],
-                    "outputs": {
-                        "sqlFQDN": {
-                            "type": "string",
-                            "value": "[reference(variables('sqlServerName')).fullyQualifiedDomainName]"
-                        }
-                    }
-                }
-            }
-        },
+    "resources": [        
         {
             "apiVersion": "2019-06-01-preview",
             "type": "Microsoft.Sql/servers/databases",
@@ -137,7 +38,7 @@
             ],
             "location": "[parameters('location')]",
             "tags": {
-                "environment": "[parameters('environment')]"
+                "fataan": "[parameters('environment')]"
             },
             "sku": {
                 "name": "Standard",
