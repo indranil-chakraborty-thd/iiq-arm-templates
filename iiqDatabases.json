@@ -5,7 +5,7 @@
         "environment": {
             "type": "string",
             "metadata": {
-                "description": "A moniker for the fataan. Effectively serves as a prefix for all resources deployed by these templates."
+                "description": "A moniker for the environment. Effectively serves as a prefix for all resources deployed by these templates."
             }
         },
         "location": {
@@ -33,12 +33,9 @@
             "apiVersion": "2019-06-01-preview",
             "type": "Microsoft.Sql/servers/databases",
             "name": "[concat(variables('sqlServerName'), '/', parameters('dbInstances')[copyIndex()])]",
-            "dependsOn": [
-                "[variables('sqlServerName')]"
-            ],
             "location": "[parameters('location')]",
             "tags": {
-                "fataan": "[parameters('environment')]"
+                "environment": "[parameters('environment')]"
             },
             "sku": {
                 "name": "Standard",

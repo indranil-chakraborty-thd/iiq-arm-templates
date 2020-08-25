@@ -11,7 +11,6 @@
         "networkingParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
         "azureSqlDatabaseTemplateUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.json')]",
         "iiqDatabasesTemplateUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.json')]",
-        "iiqDatabasesParametersUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.parameters.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.json')]",
         "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.parameters.json')]"
     },
@@ -86,9 +85,16 @@
                     "uri": "[variables('iiqDatabasesTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parametersLink": {
-                    "uri": "[variables('iiqDatabasesParametersUrl')]",
-                    "contentVersion": "1.0.0.0"
+                "parameters": {
+                    "environment": {
+                        "value": "sandbox"
+                    },
+                    "dbInstances": {
+                        "value": [
+                            "identityiq",
+                            "identityiqPlugin"
+                        ]
+                    }
                 },
                 "dependsOn": [ "azureSqlDatabaseTemplate" ]
             }
