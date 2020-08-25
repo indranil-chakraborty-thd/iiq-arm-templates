@@ -22,29 +22,31 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2018-11-01",
             "name": "[variables('vNetName')]",
-            "location": "[parameters('location')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2020-05-01",
+            "tags": {
+                "displayName": "[variables('vNetName')]"
+            },
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
                         "[parameters('VNetSettings').VNetAddressPrefix]"
                     ]
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-05-01",
-            "name": "[concat(variables('vNetName'), '/', parameters('VNetSettings').subnets[copyIndex()].name)]",
-            "copy": {
-                "name": "subnetsCopy",
-                "count": "[length(parameters('VNetSettings').subnets)]",
-                "mode": "Parallel"
-            },
-            "properties": {
-                "addressPrefix": "[parameters('VNetSettings').subnets[copyIndex()].addressPrefix]"                
+                },
+                "copy": [
+                    {
+                        "name": "subnetsCopy",
+                        "count": "[length(parameters('VNetSettings').subnets)]",
+                        "input": {
+                            "name": "[parameters('VNetSettings')[copyIndex('subnetsCopy')].name]",
+                            "properties": {
+                                "addressPrefix": "[parameters('VNetSettings')[copyIndex('subnetsCopy')].addressPrefix]"
+                            }
+                        }
+                    }
+                ]
             }
         }
     ]
