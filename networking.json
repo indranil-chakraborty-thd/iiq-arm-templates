@@ -24,13 +24,19 @@
         "dbSubnetAddressPrefix": {
             "type": "string",
             "metadata": {
-                "description": "Address prefix for the vNet"
+                "description": "Address prefix for the database subnet"
             }
         },
         "appSubnetAddressPrefix": {
             "type": "string",
             "metadata": {
-                "description": "Address prefix for the vNet"
+                "description": "Address prefix for the application subnet"
+            }
+        },
+        "azureBastionSubnetPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Address prefix for the bastion subnet"
             }
         }
     },
@@ -38,6 +44,7 @@
         "vNetName": "[concat(parameters('environment'), '-vnet')]",
         "dbSubnetName": "[concat(parameters('environment'), '-dataSubnet')]",
         "appSubnetName": "[concat(parameters('environment'), '-appSubnet')]",
+        "bastionSubnetName": "AzureBastionSubnet",
         "dbSubnetSecurityGroupName": "[concat(variables('dbSubnetName'), '-nsg')]",
         "appSubnetSecurityGroupName": "[concat(variables('appSubnetName'), '-nsg')]"
     },
@@ -89,6 +96,12 @@
                                     ]
                                 }
                             ]
+                        }
+                    },
+                     {
+                        "name": "[variables('bastionSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('azureBastionSubnetPrefix')]"                            
                         }
                     }
                 ]

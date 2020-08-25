@@ -13,6 +13,9 @@
         },
         "appSubnetAddressPrefix": {
             "value": "10.124.0.64/27"
+        },
+        "azureBastionSubnetPrefix":{
+            "value": "10.124.0.96/27"
         }
     }
 }
