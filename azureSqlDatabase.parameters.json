@@ -15,6 +15,9 @@
                 },
                 "secretName": "[parameters('secretName')]"
             }
+        },
+        "dataSubnetId": {
+            "value": "[reference('networkingTemplate').outputs.dataSubnetId.value]"
         }
     }
 }

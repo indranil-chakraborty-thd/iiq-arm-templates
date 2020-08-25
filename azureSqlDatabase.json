@@ -21,6 +21,9 @@
         },
         "administratorLoginPassword": {
             "type": "securestring"           
+        },
+        "dataSubnetId":{
+            "type": "string"
         }
     },
     "variables": {
@@ -38,6 +41,18 @@
                 "location": "[parameters('location')]",
                 "version": "12.0",
                 "minimalTlsVersion": "1.2"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers/virtualNetworkRules",
+            "apiVersion": "2015-05-01-preview",
+            "name": "[concat(variables('sqlServerName'), '/allow-app-to-iiq-dbs')]",
+            "dependsOn": [
+                "[variables('sqlServerName')]"
+            ],
+            "properties": {
+                "virtualNetworkSubnetId": "[concat(parameters('virtualNetworks_sandbox_vnet_externalid'), '/subnets/sandbox-dataSubnet')]",
+                "ignoreMissingVnetServiceEndpoint": false
             }
         }
     ],
