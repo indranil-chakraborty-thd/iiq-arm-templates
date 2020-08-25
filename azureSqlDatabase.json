@@ -58,8 +58,8 @@
         }
     ],
     "outputs": {
-        "sqlServerId": {
-            "value": "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]",
+        "sqlServerName": {
+            "value": "[variables('sqlServerName')]",
             "type": "string"
         }
     }

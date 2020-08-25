@@ -19,7 +19,7 @@
                 "description": "Defines the IdentityIQ database names."
             }
         },
-        "sqlServerId": {
+        "sqlServerName": {
             "type": "string"
         }
     },
@@ -32,7 +32,7 @@
         {
             "apiVersion": "2019-06-01-preview",
             "type": "Microsoft.Sql/servers/databases",
-            "name": "[concat(parameters('sqlServerId'), '/', parameters('dbInstances')[copyIndex()])]",
+            "name": "[concat(parameters('sqlServerName'), '/', parameters('dbInstances')[copyIndex()])]",
             "location": "[parameters('location')]",
             "tags": {
                 "resourceGroup": "[parameters('resourceGroup')]"

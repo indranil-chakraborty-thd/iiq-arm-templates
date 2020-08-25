@@ -93,10 +93,8 @@
                             "identityiqPlugin"
                         ]
                     },
-                    "parameters": {
-                        "sqlServerId": {
-                            "value": "[reference('azureSqlDatabaseTemplate').outputs.sqlServerId.value]"
-                        }
+                    "sqlServerName": {
+                        "value": "[reference('azureSqlDatabaseTemplate').outputs.sqlServerName.value]"
                     }
                 },
                 "dependsOn": [ "azureSqlDatabaseTemplate" ]
