@@ -7,11 +7,9 @@
     "variables": {
         "templateBaseUrl": "https://raw.githubusercontent.com/indranil-chakraborty-thd/iiq-arm-templates/arm-template-tutorial-7/",
         "keyVaultTemplateUrl": "[uri(variables('templateBaseUrl'), 'deployKeyVault.json')]",
-        "keyVaultParametersUrl": "[uri(variables('templateBaseUrl'), 'deployKeyVault.parameters.json')]",
         "networkingTemplateUrl": "[uri(variables('templateBaseUrl'), 'networking.json')]",
         "networkingParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
         "azureSqlDatabaseTemplateUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.json')]",
-        "azureSqlDatabaseParameterUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.parameters.json')]",
         "iiqDatabasesTemplateUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.json')]",
         "iiqDatabasesParametersUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.parameters.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.json')]",
@@ -28,9 +26,10 @@
                     "uri": "[variables('keyVaultTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parametersLink": {
-                    "uri": "[variables('keyVaultParametersUrl')]",
-                    "contentVersion": "1.0.0.0"
+                "parameters": {
+                    "environment": {
+                        "value": "sandbox"
+                    }
                 }
             }
         },
@@ -60,9 +59,18 @@
                     "uri": "[variables('azureSqlDatabaseTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parametersLink": {
-                    "uri": "[variables('azureSqlDatabaseParameterUrl')]",
-                    "contentVersion": "1.0.0.0"
+                "parameters": {
+                    "environment": {
+                        "value": "sandbox"
+                    },
+                    "administratorLoginPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[reference('keyVaultTemplate').outputs.keyVaultResourceId.value]"
+                            },
+                            "secretName": "sqlAdministratorLoginPassword"
+                        }
+                    }
                 }
             }
         },

@@ -15,26 +15,12 @@
                 "description": "The location where the resources will be deployed."
             }
         },
-        "secretName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the secret."
-            }
-        },
         "administratorLogin": {
             "type": "string",
             "defaultValue": "[concat(parameters('environment'), '-sql-admin')]"
         },
         "administratorLoginPassword": {
-            "type": "securestring",
-            "defaultValue": {
-                "reference": {
-                    "keyVault": {
-                        "id": "[reference('keyVaultTemplate').outputs.keyVaultResourceId.value]"
-                    },
-                    "secretName": "[parameters('secretName')]"
-                }
-            }
+            "type": "securestring"           
         }
     },
     "variables": {
