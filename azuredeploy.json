@@ -70,9 +70,12 @@
                             },
                             "secretName": "sqlAdministratorLoginPassword"
                         }
+                    },
+                    "appSubnetId":{
+                        "value": "[reference('networkingTemplate').outputs.appSubnetId.value]"
                     }
                 },
-                "dependsOn": [ "keyVaultTemplate" ]
+                "dependsOn": [ "keyVaultTemplate", "networkingTemplate" ]
             }
         },
         {
