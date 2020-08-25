@@ -27,8 +27,8 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "environment": {
-                        "vaultName": "ixc5ffg-vault"
+                    "vaultName": {
+                        "value": "ixc5ffg-vault"
                     }
                 }
             }

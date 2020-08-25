@@ -77,10 +77,10 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "[concat(variables('vaultName'), '/','sqlAdministratorLoginPassword')]",
+            "name": "[concat(parameters('vaultName'), '/','sqlAdministratorLoginPassword')]",
             "apiVersion": "2016-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))]"
             ],
             "properties": {
                 "value": "[variables('sqlAdministratorLoginPasswordValue')]"
@@ -89,7 +89,7 @@
     ],
     "outputs": {
         "keyVaultResourceId": {
-            "value": "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]",
+            "value": "[resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))]",
             "type": "string"
         }
     }
