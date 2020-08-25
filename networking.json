@@ -4,7 +4,7 @@
     "parameters": {
         "resourceGroup": {
             "type": "string",
-           "defaultValue": "[resourceGroup().name]"
+            "defaultValue": "[resourceGroup().name]"
         },
         "location": {
             "type": "string",
@@ -13,38 +13,12 @@
                 "description": "Specifies the location for all resources."
             }
         },
-        "vNetAddressPrefixes": {
-            "type": "string",
-            "metadata": {
-                "description": "Address prefix for the vNet"
-            }
-        },
-        "dbSubnetAddressPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Address prefix for the database subnet"
-            }
-        },
-        "appSubnetAddressPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Address prefix for the application subnet"
-            }
-        },
-        "azureBastionSubnetPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Address prefix for the bastion subnet"
-            }
+        "VNetSettings": {
+            "type": "object"
         }
     },
     "variables": {
-        "vNetName": "[concat(parameters('resourceGroup'), '-vnet')]",
-        "dbSubnetName": "[concat(parameters('resourceGroup'), '-dataSubnet')]",
-        "appSubnetName": "[concat(parameters('resourceGroup'), '-appSubnet')]",
-        "bastionSubnetName": "AzureBastionSubnet",
-        "dbSubnetSecurityGroupName": "[concat(variables('dbSubnetName'), '-nsg')]",
-        "appSubnetSecurityGroupName": "[concat(variables('appSubnetName'), '-nsg')]"
+        "vNetName": "[concat(parameters('resourceGroup'), '-', parameters('VNetSettings').VNetName)]"
     },
     "resources": [
         {
@@ -52,100 +26,26 @@
             "apiVersion": "2018-11-01",
             "name": "[variables('vNetName')]",
             "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('dbSubnetSecurityGroupName'))]"
-            ],
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[parameters('vNetAddressPrefixes')]"
+                        "[parameters('VNetSettings').VNetAddressPrefix]"
                     ]
-                },
-                "subnets": [
-                    {
-                        "name": "[variables('dbSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('dbSubnetAddressPrefix')]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('dbSubnetSecurityGroupName'))]"
-                            },
-                            "serviceEndpoints": [
-                                {
-                                    "service": "Microsoft.Sql",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        "name": "[variables('appSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('appSubnetAddressPrefix')]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('appSubnetSecurityGroupName'))]"
-                            },
-                            "serviceEndpoints": [
-                                {
-                                    "service": "Microsoft.Sql",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                     {
-                        "name": "[variables('bastionSubnetName')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('azureBastionSubnetPrefix')]"                            
-                        }
-                    }
-                ]
+                }
             }
         },
         {
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2018-11-01",
-            "name": "[variables('appSubnetSecurityGroupName')]",
-            "location": "[parameters('location')]",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(variables('vNetName'), '/', parameters('VNetSettings').subnets[copyIndex()].name)]",
+            "copy": {
+                "name": "subnetsCopy",
+                "count": "[length(parameters('VNetSettings').subnets)]",
+                "mode": "Parallel"
+            },
             "properties": {
-                "securityRules": [
-                    {
-                        "name": "ssh_rule",
-                        "properties": {
-                            "description": "Locks inbound down to ssh default port 22 from only the vNet.",
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "22",
-                            "sourceAddressPrefix": "[parameters('vNetAddressPrefixes')]",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 123,
-                            "direction": "Inbound"
-                        }
-                    }
-                ]
+                "addressPrefix": "[parameters('VNetSettings').subnets[copyIndex()].addressPrefix]"                
             }
-        },
-        {
-            "comments": "Simple Network Security Group for subnet [variables('vNetSubnetName')]",
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2019-08-01",
-            "name": "[variables('dbSubnetSecurityGroupName')]",
-            "location": "[parameters('location')]",
-            "properties": {}
         }
-    ],
-    "outputs": {
-        "appSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('appSubnetName'))]",
-            "type": "string"
-        },
-        "bastionSubnetId": {
-            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('bastionSubnetName'))]",
-            "type": "string"
-        }
-    }
+    ]
 }
