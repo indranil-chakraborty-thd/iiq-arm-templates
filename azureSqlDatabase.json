@@ -20,78 +20,34 @@
             "metadata": {
                 "description": "The name of the secret."
             }
+        },
+        "administratorLogin": {
+            "type": "string"
+        },
+        "administratorLoginPassword": {
+            "reference": {
+                "keyVault": {
+                    "id": "[reference('keyVaultTemplate').outputs.keyVaultResourceId.value]"
+                },
+                "secretName": "[parameters('secretName')]"
+            }
         }
+    },
+    "variables": {
+        "sqlServerName": "[concat(parameters('environment'), '-azure-sql-instance')]"
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": "dynamicSecret",
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2019-06-01-preview",
+            "name": "[variables('sqlServerName')]",
+            "location": "[parameters('location')]",
             "properties": {
-                "mode": "Incremental",
-                "expressionEvaluationOptions": {
-                    "scope": "inner"
-                },
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {
-                        "adminLogin": {
-                            "type": "string"
-                        },
-                        "adminPassword": {
-                            "type": "securestring"
-                        },
-                        "location": {
-                            "type": "string"
-                        },
-                        "environment": {
-                            "type": "string"
-                        }
-                    },
-                    "variables": {
-                        "sqlServerName": "[concat(parameters('environment'), '-azure-sql-instance')]"
-                    },
-                    "resources": [
-                        {
-                            "type": "Microsoft.Sql/servers",
-                            "apiVersion": "2019-06-01-preview",
-                            "name": "[variables('sqlServerName')]",
-                            "location": "[parameters('location')]",
-                            "properties": {
-                                "administratorLogin": "[parameters('adminLogin')]",
-                                "administratorLoginPassword": "[parameters('adminPassword')]",
-                                "version": "12.0",
-                                "minimalTlsVersion": "1.2"
-                            }
-                        }
-                    ],
-                    "outputs": {
-                        "sqlFQDN": {
-                            "type": "string",
-                            "value": "[reference(variables('sqlServerName')).fullyQualifiedDomainName]"
-                        }
-                    }
-                },
-                "parameters": {
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "adminLogin": {
-                        "value": "[concat(parameters('environment'), '-sql-admin')]"
-                    },
-                    "adminPassword": {
-                        "reference": {
-                            "keyVault": {
-                                "id": "[reference('keyVaultTemplate').outputs.keyVaultResourceId.value]"
-                            },
-                            "secretName": "[parameters('secretName')]"
-                        }
-                    },
-                    "environment": {
-                        "value": "[parameters('environment')]"
-                    }
-                }
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "location": "[parameters('location')]",
+                "version": "12.0",
+                "minimalTlsVersion": "1.2"
             }
         }
     ],

@@ -64,9 +64,7 @@
                     "uri": "[variables('azureSqlDatabaseParameterUrl')]",
                     "contentVersion": "1.0.0.0"
                 }
-            },
-            "dependsOn": [ "keyVaultTemplate" ]
-
+            }
         },
         {
             "type": "Microsoft.Resources/deployments",
