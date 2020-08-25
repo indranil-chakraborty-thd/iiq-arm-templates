@@ -128,7 +128,7 @@
         }
     ],
     "outputs": {
-        "dataSubnetId": {
+        "appSubnetId": {
             "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('appSubnetName'))]",
             "type": "string"
         }

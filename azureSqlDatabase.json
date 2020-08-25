@@ -22,8 +22,11 @@
         "administratorLoginPassword": {
             "type": "securestring"           
         },
-        "dataSubnetId":{
-            "type": "string"
+        "appSubnetId":{
+            "type": "string",
+            "metadata": {
+                "description": "The resource ID of the app subnet."
+            }
         }
     },
     "variables": {
@@ -51,7 +54,7 @@
                 "[variables('sqlServerName')]"
             ],
             "properties": {
-                "virtualNetworkSubnetId": "[concat(parameters('virtualNetworks_sandbox_vnet_externalid'), '/subnets/sandbox-dataSubnet')]",
+                "virtualNetworkSubnetId": "[parameters('appSubnetId')]",
                 "ignoreMissingVnetServiceEndpoint": false
             }
         }
