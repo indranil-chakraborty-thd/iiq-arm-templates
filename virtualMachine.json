@@ -2,11 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "environment": {
+        "resourceGroup": {
             "type": "string",
-            "metadata": {
-                "description": "Moniker for the environment we are running on"
-            }
+            "defaultValue": "[resourceGroup().name]"
         },
         "vmSize": {
             "type": "string",
@@ -66,10 +64,10 @@
 
     },
     "variables": {
-        "vNetName": "[concat(parameters('environment'), '-vnet')]",
-        "appSubnetName": "[concat(parameters('environment'), '-appSubnet')]",
-        "vmName": "[concat(parameters('environment'), '-vm')]",
-        "networkInterfaceName": "[concat(parameters('environment'), '-nic')]"
+        "vNetName": "[concat(parameters('resourceGroup'), '-vnet')]",
+        "appSubnetName": "[concat(parameters('resourceGroup'), '-appSubnet')]",
+        "vmName": "[concat(parameters('resourceGroup'), '-vm')]",
+        "networkInterfaceName": "[concat(parameters('resourceGroup'), '-nic')]"
     },
     "resources": [
         {

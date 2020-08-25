@@ -12,14 +12,14 @@
         },
         "bastionHostName": {
             "type": "string",
-            "defaultValue": "[concat(resourceGroup().name, 'bastion-host')]"
+            "defaultValue": "[concat(resourceGroup().name, '-bastion-host')]"
         },
         "bastionSubnetId": {
             "type": "string"
         },
         "publicIpAddressName": {
             "type": "string",
-            "defaultValue": "[concat(resourceGroup().name, 'bastion-public-ip')]"
+            "defaultValue": "[concat(resourceGroup().name, '-bastion-public-ip')]"
         }
     },
     "resources": [

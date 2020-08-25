@@ -61,9 +61,6 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "environment": {
-                        "value": "sandbox"
-                    },
                     "administratorLoginPassword": {
                         "reference": {
                             "keyVault": {
@@ -89,10 +86,7 @@
                     "uri": "[variables('iiqDatabasesTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parameters": {
-                    "environment": {
-                        "value": "sandbox"
-                    },
+                "parameters": {                   
                     "dbInstances": {
                         "value": [
                             "identityiq",
@@ -113,14 +107,10 @@
                     "uri": "[variables('bastionTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "bastionHostName": {
-                    "type": "string"
-                },
-                "bastionSubnetId": {
-                    "value": "[reference('networkingTemplate').outputs.bastionSubnetId.value]"
-                },
-                "publicIpAddressName": {
-                    "type": "string"
+                "parameters": {
+                    "bastionSubnetId": {
+                        "value": "[reference('networkingTemplate').outputs.bastionSubnetId.value]"
+                    }
                 }
             },
             "dependsOn": [

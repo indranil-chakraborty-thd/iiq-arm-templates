@@ -2,11 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "environment": {
+        "resourceGroup": {
             "type": "string",
-            "metadata": {
-                "description": "Specifies a name for generating resource names."
-            }
+           "defaultValue": "[resourceGroup().name]"
         },
         "location": {
             "type": "string",
@@ -41,9 +39,9 @@
         }
     },
     "variables": {
-        "vNetName": "[concat(parameters('environment'), '-vnet')]",
-        "dbSubnetName": "[concat(parameters('environment'), '-dataSubnet')]",
-        "appSubnetName": "[concat(parameters('environment'), '-appSubnet')]",
+        "vNetName": "[concat(parameters('resourceGroup'), '-vnet')]",
+        "dbSubnetName": "[concat(parameters('resourceGroup'), '-dataSubnet')]",
+        "appSubnetName": "[concat(parameters('resourceGroup'), '-appSubnet')]",
         "bastionSubnetName": "AzureBastionSubnet",
         "dbSubnetSecurityGroupName": "[concat(variables('dbSubnetName'), '-nsg')]",
         "appSubnetSecurityGroupName": "[concat(variables('appSubnetName'), '-nsg')]"

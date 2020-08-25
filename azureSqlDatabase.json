@@ -2,11 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "environment": {
+        "resourceGroup": {
             "type": "string",
-            "metadata": {
-                "description": "A moniker for the environment."
-            }
+            "defaultValue": "[resourceGroup().name]"
         },
         "location": {
             "type": "string",
@@ -17,7 +15,7 @@
         },
         "administratorLogin": {
             "type": "string",
-            "defaultValue": "[concat(parameters('environment'), '-sql-admin')]"
+            "defaultValue": "[concat(parameters('resourceGroup'), '-sql-admin')]"
         },
         "administratorLoginPassword": {
             "type": "securestring"           
@@ -30,7 +28,7 @@
         }
     },
     "variables": {
-        "sqlServerName": "[concat(parameters('environment'), '-azure-sql-instance')]"
+        "sqlServerName": "[concat(parameters('resourceGroup'), '-azure-sql-instance')]"
     },
     "resources": [
         {
