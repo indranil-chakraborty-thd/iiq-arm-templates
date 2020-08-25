@@ -71,7 +71,8 @@
                             "secretName": "sqlAdministratorLoginPassword"
                         }
                     }
-                }
+                },
+                "dependsOn": [ "keyVaultTemplate" ]
             }
         },
         {

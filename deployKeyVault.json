@@ -11,7 +11,7 @@
         }
     },
     "variables": {
-        "vaultName": "[concat(parameters('environment'), '-vault')]",
+        "vaultName": "[concat(parameters('environment'), '-vault', parameters('utcValue'))]",
         "sqlAdministratorLoginPasswordValue": "[replace(base64(uniqueString(parameters('utcValue'))), '==', '%%')]"
 
     },
