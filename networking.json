@@ -43,12 +43,12 @@
                 },
                 "copy": [
                     {
-                        "name": "subnetsCopy",
+                        "name": "subnets",
                         "count": "[length(parameters('subnets'))]",
                         "input": {
-                            "name": "[parameters('subnets')[copyIndex('subnetsCopy')].name]",
+                            "name": "[parameters('subnets')[copyIndex('subnets')].name]",
                             "properties": {
-                                "addressPrefix": "[parameters('subnets')[copyIndex('subnetsCopy')].addressPrefix]"
+                                "addressPrefix": "[parameters('subnets')[copyIndex('subnets')].addressPrefix]"
                             }
                         }
                     }
