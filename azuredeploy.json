@@ -86,12 +86,17 @@
                     "uri": "[variables('iiqDatabasesTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parameters": {                   
+                "parameters": {
                     "dbInstances": {
                         "value": [
                             "identityiq",
                             "identityiqPlugin"
                         ]
+                    },
+                    "parameters": {
+                        "sqlServerId": {
+                            "value": "[reference('azureSqlDatabaseTemplate').outputs.sqlServerId.value]"
+                        }
                     }
                 },
                 "dependsOn": [ "azureSqlDatabaseTemplate" ]
