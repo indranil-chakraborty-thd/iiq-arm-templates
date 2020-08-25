@@ -6,13 +6,13 @@
             "value": "sandbox"
         },             
         "vNetAddressPrefixes": {
-            "value": "10.124.0.0/24"
+            "value": "10.124.0.0/25"
         },
         "dbSubnetAddressPrefix": {
-            "value": "10.124.0.16/27"
+            "value": "10.124.0.32/27"
         },
         "appSubnetAddressPrefix": {
-            "value": "10.124.0.32/27"
+            "value": "10.124.0.64/27"
         }
     }
 }
