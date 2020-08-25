@@ -12,7 +12,6 @@
     },
     "variables": {
         "sqlAdministratorLoginPasswordValue": "[replace(base64(uniqueString(parameters('utcValue'))), '==', '%%')]"
-
     },
     "resources": [
         {
