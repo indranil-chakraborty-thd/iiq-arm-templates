@@ -28,7 +28,7 @@
                 },
                 "parameters": {
                     "environment": {
-                        "value": "sandbox"
+                        "vaultName": "ixc5ffg-vault"
                     }
                 }
             }
