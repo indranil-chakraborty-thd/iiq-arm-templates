@@ -22,14 +22,18 @@
             }
         },
         "administratorLogin": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat(parameters('environment'), '-sql-admin')]"
         },
         "administratorLoginPassword": {
-            "reference": {
-                "keyVault": {
-                    "id": "[reference('keyVaultTemplate').outputs.keyVaultResourceId.value]"
-                },
-                "secretName": "[parameters('secretName')]"
+            "type": "securestring",
+            "defaultValue": {
+                "reference": {
+                    "keyVault": {
+                        "id": "[reference('keyVaultTemplate').outputs.keyVaultResourceId.value]"
+                    },
+                    "secretName": "[parameters('secretName')]"
+                }
             }
         }
     },
