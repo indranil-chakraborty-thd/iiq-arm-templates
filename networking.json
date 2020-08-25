@@ -144,6 +144,10 @@
         "appSubnetId": {
             "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('appSubnetName'))]",
             "type": "string"
+        },
+        "bastionSubnetId": {
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('bastionSubnetName'))]",
+            "type": "string"
         }
     }
 }

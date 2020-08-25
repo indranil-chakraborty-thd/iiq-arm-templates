@@ -11,6 +11,7 @@
         "networkingParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
         "azureSqlDatabaseTemplateUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.json')]",
         "iiqDatabasesTemplateUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.json')]",
+        "bastionTemplateUrl": "[uri(variables('templateBaseUrl'), 'bastion.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.json')]",
         "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.parameters.json')]"
     },
@@ -71,7 +72,7 @@
                             "secretName": "sqlAdministratorLoginPassword"
                         }
                     },
-                    "appSubnetId":{
+                    "appSubnetId": {
                         "value": "[reference('networkingTemplate').outputs.appSubnetId.value]"
                     }
                 },
@@ -102,6 +103,30 @@
                 "dependsOn": [ "azureSqlDatabaseTemplate" ]
             }
         },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "bastionTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('bastionTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "bastionHostName": {
+                    "type": "string"
+                },
+                "bastionSubnetId": {
+                    "value": "[reference('networkingTemplate').outputs.bastionSubnetId.value]"
+                },
+                "publicIpAddressName": {
+                    "type": "string"
+                }
+            },
+            "dependsOn": [
+                "networkingTemplate"
+            ]
+        }
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",

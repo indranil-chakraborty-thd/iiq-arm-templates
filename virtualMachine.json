@@ -69,40 +69,20 @@
         "vNetName": "[concat(parameters('environment'), '-vnet')]",
         "appSubnetName": "[concat(parameters('environment'), '-appSubnet')]",
         "vmName": "[concat(parameters('environment'), '-vm')]",
-        "publicIPAddressName": "[concat(parameters('environment'), '-ip')]",
         "networkInterfaceName": "[concat(parameters('environment'), '-nic')]"
     },
     "resources": [
-
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2018-11-01",
-            "name": "[variables('publicIPAddressName')]",
-            "location": "[parameters('location')]",
-            "properties": {
-                "publicIPAllocationMethod": "Dynamic"
-            },
-            "sku": {
-                "name": "Basic"
-            }
-        },
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2018-11-01",
             "name": "[variables('networkInterfaceName')]",
             "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
-            ],
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]"
-                            },
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('appSubnetName'))]"
                             }
