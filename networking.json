@@ -13,18 +13,24 @@
                 "description": "Specifies the location for all resources."
             }
         },
-        "VNetSettings": {
-            "type": "object"
+        "VNetName": {
+            "type": "string"
+        },
+        "VNetAddressPrefix": {
+            "type": "string"
+        },
+        "subnets": {
+            "type": "array"
         }
     },
     "variables": {
-        "vNetName": "[concat(parameters('resourceGroup'), '-', parameters('VNetSettings').VNetName)]"
+        "vNetName": "[concat(parameters('resourceGroup'), '-', parameters('VNetName'))]"
     },
     "resources": [
         {
             "name": "[variables('vNetName')]",
             "type": "Microsoft.Network/virtualNetworks",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('location')]",
             "apiVersion": "2020-05-01",
             "tags": {
                 "displayName": "[variables('vNetName')]"
@@ -32,17 +38,17 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[parameters('VNetSettings').VNetAddressPrefix]"
+                        "[parameters('VNetAddressPrefix')]"
                     ]
                 },
                 "copy": [
                     {
                         "name": "subnetsCopy",
-                        "count": "[length(parameters('VNetSettings').subnets)]",
+                        "count": "[length(parameters('subnets'))]",
                         "input": {
-                            "name": "[parameters('VNetSettings')[copyIndex('subnetsCopy')].name]",
+                            "name": "[parameters('subnets')[copyIndex('subnetsCopy')].name]",
                             "properties": {
-                                "addressPrefix": "[parameters('VNetSettings')[copyIndex('subnetsCopy')].addressPrefix]"
+                                "addressPrefix": "[parameters('subnets')[copyIndex('subnetsCopy')].addressPrefix]"
                             }
                         }
                     }
