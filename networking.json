@@ -54,6 +54,7 @@
                     }
                 ]
             }
+            
         }
     ],
     "outputs": {
@@ -62,7 +63,8 @@
             "copy": {
                 "count": "[length(parameters('subnets'))]",
                 "input": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), parameters('subnets')[copyIndex()].name)]"                    
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), parameters('subnets')[copyIndex()].name)]",
+                    "name": "[parameters('subnets')[copyIndex()].name]"
                 }
             }
         }
