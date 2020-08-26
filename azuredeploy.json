@@ -16,7 +16,23 @@
         "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.parameters.json')]"
     },
     "resources": [
-
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "keyVaultTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('keyVaultTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vaultName": {
+                        "value": "ixc5ffg-vault"
+                    }
+                }
+            }
+        },
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -31,7 +47,97 @@
                     "uri": "[variables('networkingParametersUrl')]",
                     "contentVersion": "1.0.0.0"
                 }
+            },
+            "dependsOn": [ "keyVaultTemplate" ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "azureSqlDatabaseTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('azureSqlDatabaseTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "administratorLoginPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[reference('keyVaultTemplate').outputs.keyVaultResourceId.value]"
+                            },
+                            "secretName": "sqlAdministratorLoginPassword"
+                        }
+                    },
+                    "appSubnetId": {
+                        "value": "[reference('networkingTemplate').outputs.subnetResourceIds.value[1].id]"
+                    }
+                },
+                "dependsOn": [ "keyVaultTemplate", "networkingTemplate" ]
             }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "iiqDatabasesTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('iiqDatabasesTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "dbInstances": {
+                        "value": [
+                            "identityiq",
+                            "identityiqPlugin"
+                        ]
+                    },
+                    "sqlServerName": {
+                        "value": "[reference('azureSqlDatabaseTemplate').outputs.sqlServerName.value]"
+                    }
+                },
+                "dependsOn": [ "azureSqlDatabaseTemplate" ]
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "bastionTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('bastionTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "bastionSubnetId": {
+                        "value": "[reference('networkingTemplate').outputs.subnetResourceIds.value[2].id]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "networkingTemplate"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "vmTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('vmParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            },
+            "dependsOn": [
+                "networkingTemplate"
+            ]
         }
     ]
 }
