@@ -24,10 +24,11 @@
             "type": "string",
             "metadata": {
                 "description": "Specifies a username for the Virtual Machine."
-            }
+            },
+            "defaultValue": "[concat(resourceGroup().name, '-iiq-admin')]"
         },
         "adminPublicKey": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "Specifies the SSH rsa public key file as a string. Use \"ssh-keygen -t rsa -b 2048\" to generate your SSH key pairs."
             }
@@ -44,12 +45,14 @@
         },
         "tomcatDownloadUri": {
             "type": "string",
+            "defaultValue": "https://apache.claz.org/tomcat/tomcat-9/v9.0.37/bin/apache-tomcat-9.0.37.tar.gz",
             "metadata": {
                 "description": "The full URI from where a Tomcat .tar.gz file can be downloaded."
             }
         },
         "tomcatVersion": {
-            "type": "string",            
+            "type": "string",
+            "defaultValue": "9.0.37",
             "metadata": {
                 "description": "The full version number of Tomcat that is installed. E.g. 9.0.37"
             }
@@ -60,12 +63,17 @@
             "metadata": {
                 "description": "The URI of the script run post VM creation to install Java and Tomcat"
             }
+        },      
+        "appSubnetId": {
+            "type": "string",
+            "metadata": {
+                "description": "The subnet ID of the appSubnet. This will be the subnet attached to the NIC for the VM."
+            }
+
         }
 
     },
     "variables": {
-        "vNetName": "[concat(parameters('resourceGroup'), '-vnet')]",
-        "appSubnetName": "[concat(parameters('resourceGroup'), '-appSubnet')]",
         "vmName": "[concat(parameters('resourceGroup'), '-vm')]",
         "networkInterfaceName": "[concat(parameters('resourceGroup'), '-nic')]"
     },
@@ -82,7 +90,7 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('appSubnetName'))]"
+                                "id": "[parameters('appSubnetId')]"
                             }
                         }
                     }

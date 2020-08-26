@@ -12,8 +12,7 @@
         "azureSqlDatabaseTemplateUrl": "[uri(variables('templateBaseUrl'), 'azureSqlDatabase.json')]",
         "iiqDatabasesTemplateUrl": "[uri(variables('templateBaseUrl'), 'iiqDatabases.json')]",
         "bastionTemplateUrl": "[uri(variables('templateBaseUrl'), 'bastion.json')]",
-        "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.json')]",
-        "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.parameters.json')]"
+        "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'virtualMachine.json')]"
     },
     "resources": [
         {
@@ -130,9 +129,10 @@
                     "uri": "[variables('vmTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parametersLink": {
-                    "uri": "[variables('vmParametersUrl')]",
-                    "contentVersion": "1.0.0.0"
+                "parameters": {                    
+                    "appSubnetId": {
+                        "value": "[reference('networkingTemplate').outputs.subnetResourceIds.value[1].id]"
+                    }
                 }
             },
             "dependsOn": [
