@@ -55,5 +55,16 @@
                 ]
             }
         }
-    ]
+    ],
+    "outputs": {
+        "subnetResourceIds": {
+            "type": "array",
+            "copy": {
+                "count": "[length(parameters('subnets'))]",
+                "input": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), parameters('subnets')[copyIndex()].name)]"                    
+                }
+            }
+        }
+    }
 }
