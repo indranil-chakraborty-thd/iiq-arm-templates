@@ -1,0 +1,42 @@
+{
+    "builders": [{
+      "type": "azure-arm",
+  
+      "client_id": "e1a663b1-8d7c-489f-a5b5-120248fab73b",
+      "client_secret": "FVl.x-fvkXRWN22rcVTvfWHp-ga3Gqgsug",
+      "tenant_id": "fb7e6711-b619-4fbe-afe6-f83b12673323",
+      "subscription_id": "9cd59a98-f6d0-4d81-be04-af44ee7ad221",
+  
+      "managed_image_resource_group_name": "arm-vscode",
+      "managed_image_name": "iiq81",
+  
+      "os_type": "Linux",
+      "image_publisher": "RedHat",
+      "image_offer": "RHEL",
+      "image_sku": "82gen2",
+  
+      "azure_tags": {
+          "dept": "Engineering",
+          "task": "Image deployment"
+      },
+  
+      "location": "East US",
+      "vm_size": "Standard_B2ms"
+    }],
+    "provisioners": [{
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "sudo yum -y install java-11-openjdk-devel",
+        "sudo useradd -u 5000 -s /sbin/nologin tomcat",
+        "wget -P /tmp https://apache.claz.org/tomcat/tomcat-9/v9.0.37/bin/apache-tomcat-9.0.37.tar.gz",
+        "sudo tar -xzf /tmp/apache-tomcat-9.0.37.tar.gz -C /opt",
+        "sudo ln -s /opt/apache-tomcat-9.0.37 /opt/tomcat",
+        "sudo chown -R tomcat:tomcat /opt/apache-tomcat-9.0.37",
+        "sudo chown -R tomcat:tomcat /opt/tomcat",
+  
+        "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+      ],
+      "inline_shebang": "/bin/sh -x",
+      "type": "shell"
+    }]
+  }

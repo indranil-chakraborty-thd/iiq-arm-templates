@@ -1,0 +1,97 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "networkInterfaceName": {
+            "value": "ixc5ffg-vm1416"
+        },
+        "networkSecurityGroupName": {
+            "value": "ixc5ffg-vm1-nsg"
+        },
+        "networkSecurityGroupRules": {
+            "value": [
+                {
+                    "name": "SSH",
+                    "properties": {
+                        "priority": 300,
+                        "protocol": "TCP",
+                        "access": "Allow",
+                        "direction": "Inbound",
+                        "sourceAddressPrefix": "*",
+                        "sourcePortRange": "*",
+                        "destinationAddressPrefix": "*",
+                        "destinationPortRange": "22"
+                    }
+                }
+            ]
+        },
+        "subnetName": {
+            "value": "appSubnet"
+        },
+        "virtualNetworkId": {
+            "value": "/subscriptions/9cd59a98-f6d0-4d81-be04-af44ee7ad221/resourceGroups/arm-vscode/providers/Microsoft.Network/virtualNetworks/arm-vscode-VNet1"
+        },
+        "publicIpAddressName": {
+            "value": "ixc5ffg-vm1-ip"
+        },
+        "publicIpAddressType": {
+            "value": "Dynamic"
+        },
+        "publicIpAddressSku": {
+            "value": "Basic"
+        },
+        "virtualMachineName": {
+            "value": "ixc5ffg-vm1"
+        },
+        "virtualMachineComputerName": {
+            "value": "ixc5ffg-vm1"
+        },
+        "virtualMachineRG": {
+            "value": "arm-vscode"
+        },
+        "osDiskType": {
+            "value": "Premium_LRS"
+        },
+        "dataDisks": {
+            "value": [
+                {
+                    "lun": 0,
+                    "createOption": "attach",
+                    "caching": "None",
+                    "writeAcceleratorEnabled": false,
+                    "id": null,
+                    "name": "ixc5ffg-vm1_DataDisk_0",
+                    "storageAccountType": null,
+                    "diskSizeGB": null,
+                    "diskEncryptionSet": null
+                }
+            ]
+        },
+        "dataDiskResources": {
+            "value": [
+                {
+                    "name": "ixc5ffg-vm1_DataDisk_0",
+                    "sku": "Premium_LRS",
+                    "properties": {
+                        "diskSizeGB": 64,
+                        "creationData": {
+                            "createOption": "empty"
+                        }
+                    }
+                }
+            ]
+        },
+        "virtualMachineSize": {
+            "value": "Standard_B1s"
+        },
+        "adminUsername": {
+            "value": "azureuser"
+        },
+        "adminPasswordOrKey":{
+            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCh6B/KgJjeAeaINgcgN5LUNG+HpPi6sV8XTldohDwrs7ogb0L4Zcw88RdWaFOxvo55jMB0jy/P2wusmfhmsZc7KRq8i7EAOAbhs9BvpWuwEiEujODo4auAzEM6W+UfvLjs8V/ZfJcAbJq7//ugmwVcPgrRkoImpdudgaQ0+OS/EDOxV2Js4F5j0IGJikaqV2VDrnrucxDqEHkPcJMIs2g9DMUr4Q1hsk5KoI/09kIzsasyB8k8DigfrucyJS2KwmJQke9COnQ8d6O7IqMRUflfiQ2WbZp2AmLxEF90G3KZEzz24ngrka4ZZpUq0m4eIYiZz913Nru1wlxhY0oEej1 IXC5FFG@C9556EBA44D0E4"
+        }
+    }
+}
