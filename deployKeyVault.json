@@ -12,10 +12,7 @@
         }
     },
     "variables": {
-        "sqlAdministratorLoginPasswordValue": "[replace(base64(uniqueString(parameters('utcValue'))), '==', '%%')]",
-        "identityName": "[concat(resourceGroup().name, '-arm-template-managed-identity')]",
-        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-        "roleDefinitionName": "[guid(variables('identityName'), variables('roleDefinitionId'))]"
+        "sqlAdministratorLoginPasswordValue": "[replace(base64(uniqueString(parameters('utcValue'))), '==', '%%')]"
     },   
     "resources": [
         {
@@ -87,30 +84,6 @@
             ],
             "properties": {
                 "value": "[variables('sqlAdministratorLoginPasswordValue')]"
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deploymentScripts",
-            "apiVersion": "2019-10-01-preview",
-            "name": "[concat(resourceGroup().name, '-secure-keyvault-script')]",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[variables('roleDefinitionName')]"
-            ],            
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]": { 
-                    }
-                }
-            },
-            "kind": "AzureCLI",
-            "properties": {                
-                "AzCliVersion": "2.0.80",
-                "timeout": "PT30M",
-                "retentionInterval": "P1D",
-                "cleanupPreference": "OnSuccess",                
-                "scriptContent": "[concat('az keyvault update --name ', parameters('vaultName'), ' ', '--default-action Deny')]"
             }
         }
     ],
