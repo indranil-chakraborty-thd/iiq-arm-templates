@@ -1,0 +1,1 @@
+az keyvault update --name $1 --default-action Allow
