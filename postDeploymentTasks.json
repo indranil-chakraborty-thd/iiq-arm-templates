@@ -51,14 +51,14 @@
                     }
                 }
             },
-            "kind": "AzureCLI",
+            "kind": "AzurePowerShell",
             "properties": {
                 "AzCliVersion": "2.0.80",
                 "timeout": "PT30M",
                 "retentionInterval": "P1D",
                 "cleanupPreference": "OnSuccess",
                 "arguments": "[concat('-vaultname', ' ', parameters('vaultName'))]",
-                "primaryScriptUri": "[parameters('primaryScriptUri')]"
+                "primaryScriptUri": "https://raw.githubusercontent.com/indranil-chakraborty-thd/iiq-arm-templates/vault-nw-vms/postDeploymentScript.ps1"
             }
         }
     ],
