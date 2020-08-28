@@ -1,5 +1,5 @@
-param([string] $vaultname)
-param([string] $vnetName)
+param([string] $vaultname, [string] $vnetName)
+
 Update-AzKeyVaultNetworkRuleSet -VaultName $vaultname -DefaultAction Deny -Bypass AzureServices -PassThru
 
 $subnets = (Get-AzVirtualNetwork -Name $vnetName).Subnets
