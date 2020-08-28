@@ -14,13 +14,19 @@
             "type": "string",
             "defaultValue": "[concat(resourceGroup().name, '-bastion-host')]"
         },
-        "bastionSubnetId": {
-            "type": "string"
-        },
         "publicIpAddressName": {
             "type": "string",
             "defaultValue": "[concat(resourceGroup().name, '-bastion-public-ip')]"
+        },
+        "vNetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the VNet for the bastion host."
+            }
         }
+    },
+    "variables": {
+        "vNetName": "[concat(parameters('resourceGroup'), '-', parameters('VNetName'))]"
     },
     "resources": [
         {
@@ -50,7 +56,7 @@
                         "name": "IpConf",
                         "properties": {
                             "subnet": {
-                                "id": "[parameters('bastionSubnetId')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), 'AzureBastionSubnet')]"
                             },
                             "publicIPAddress": {
                                 "id": "[resourceId(parameters('resourceGroup'), 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"

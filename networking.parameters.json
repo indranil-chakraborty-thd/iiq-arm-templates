@@ -17,6 +17,10 @@
                 {
                     "name": "dbSubnet",
                     "addressPrefix": "10.124.0.64/27"
+                },
+                {
+                    "name": "AzureBastionSubnet",
+                    "addressPrefix": "10.124.0.96/27"
                 }
             ]
         }

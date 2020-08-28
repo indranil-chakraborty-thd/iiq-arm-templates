@@ -9,6 +9,7 @@
         "keyVaultTemplateUrl": "[uri(variables('templateBaseUrl'), 'deployKeyVault.json')]",
         "networkingTemplateUrl": "[uri(variables('templateBaseUrl'), 'networking.json')]",
         "networkingParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
+        "bastionTemplateUrl": "[uri(variables('templateBaseUrl'), 'bastion.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.json')]",
         "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.parameters.json')]"
     },
@@ -41,7 +42,27 @@
                 }
             },
             "dependsOn": [ "keyVaultTemplate" ]
-        },       
+        },     
+         {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "bastionTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('bastionTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "bastionSubnetId": {
+                        "value": "[reference('networkingTemplate').outputs.subnetResourceIds.value[2].id]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "networkingTemplate"
+            ]
+        },  
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
