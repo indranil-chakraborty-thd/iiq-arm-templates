@@ -10,6 +10,7 @@
         "networkingTemplateUrl": "[uri(variables('templateBaseUrl'), 'networking.json')]",
         "networkingParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
         "bastionTemplateUrl": "[uri(variables('templateBaseUrl'), 'bastion.json')]",
+        "bastionParametersUrl": "[uri(variables('templateBaseUrl'), 'bastion.parameters.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.json')]",
         "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.parameters.json')]"
     },
@@ -53,10 +54,9 @@
                     "uri": "[variables('bastionTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parameters": {
-                    "bastionSubnetId": {
-                        "value": "[reference('networkingTemplate').outputs.subnetResourceIds.value[2].id]"
-                    }
+                "parametersLink": {
+                    "uri": "[variables('bastionParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
                 }
             },
             "dependsOn": [
