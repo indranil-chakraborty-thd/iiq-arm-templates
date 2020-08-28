@@ -19,21 +19,29 @@
                 "description": "Specifies the SSH rsa public key file as a string. Use \"ssh-keygen -t rsa -b 2048\" to generate your SSH key pairs."
             }
         },
-        "appSubnetId": {
-            "type": "string",
-            "metadata": {
-                "description": "The subnet ID of the appSubnet. This will be the subnet attached to the NIC for the VM."
-            }
-        },
         "vm_specs": {
             "type": "array"
         },
         "vmImageName":{
             "type": "string",
             "defaultValue": "iiq81-centos8-java11-tomcat9"
+        },
+        "vNetName":{
+            "type": "string",
+            "metadata": {
+                "description": "The name of the VNet to which the NIC for the VMs will be attached to."
+            }
+        },
+        "subnetName":{
+            "type": "string",
+            "metadata": {
+                "description": "The name of the subnet of the VNet to which the NIC for the VMs will be attached to."
+            }
         }
     },
-    "variables": {},
+    "variables": {
+        "vNetName": "[concat(parameters('resourceGroup'), '-', parameters('VNetName'))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Network/networkInterfaces",
@@ -51,7 +59,7 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
-                                "id": "[parameters('appSubnetId')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), parameters('subnetName'))]"
                             }
                         }
                     }
@@ -92,7 +100,6 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        //"id": "/subscriptions/9cd59a98-f6d0-4d81-be04-af44ee7ad221/resourceGroups/arm-vscode/providers/Microsoft.Compute/images/iiq81-centos8-java11-tomcat9"
                         "id": "[resourceId('Microsoft.Compute/images', parameters('vmImageName'))]"
 
                     },
