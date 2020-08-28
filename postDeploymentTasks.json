@@ -53,7 +53,7 @@
             },
             "kind": "AzurePowerShell",
             "properties": {
-                "AzCliVersion": "2.0.80",
+                "azPowerShellVersion": "3.0",
                 "timeout": "PT30M",
                 "retentionInterval": "P1D",
                 "cleanupPreference": "OnSuccess",
