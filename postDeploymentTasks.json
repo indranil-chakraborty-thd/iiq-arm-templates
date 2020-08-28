@@ -57,7 +57,7 @@
                 "timeout": "PT30M",
                 "retentionInterval": "P1D",
                 "cleanupPreference": "OnSuccess",
-                "arguments": "[parameters('vaultName')]",
+                "arguments": "[concat('-vaultname', ' ', parameters('vaultName'))]",
                 "primaryScriptUri": "[parameters('primaryScriptUri')]"
             }
         }

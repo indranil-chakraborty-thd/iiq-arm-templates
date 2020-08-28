@@ -49,15 +49,20 @@
                             "name": "[parameters('subnets')[copyIndex('subnets')].name]",
                             "properties": {
                                 "addressPrefix": "[parameters('subnets')[copyIndex('subnets')].addressPrefix]",
-                                
                                 "serviceEndpoints": [
-                                {
-                                    "service": "Microsoft.Sql",
-                                    "locations": [
-                                        "[parameters('location')]"
-                                    ]
-                                }
-                            ]
+                                    {
+                                        "service": "Microsoft.Sql",
+                                        "locations": [
+                                            "[parameters('location')]"
+                                        ]
+                                    },
+                                    {
+                                        "service": "Microsoft.KeyVault",
+                                        "locations": [
+                                            "[parameters('location')]"
+                                        ]
+                                    }
+                                ]
                             }
                         }
                     }

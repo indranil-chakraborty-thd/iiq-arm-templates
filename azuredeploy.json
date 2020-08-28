@@ -12,7 +12,9 @@
         "bastionTemplateUrl": "[uri(variables('templateBaseUrl'), 'bastion.json')]",
         "bastionParametersUrl": "[uri(variables('templateBaseUrl'), 'bastion.parameters.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.json')]",
-        "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.parameters.json')]"
+        "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.parameters.json')]",
+        "postDeploymentTemplateUrl": "[uri(variables('templateBaseUrl'), 'postDeploymentTasks.json')]",
+        "postDeploymentScriptUrl": "[uri(variables('templateBaseUrl'), 'postDeploymentScript.ps1')]"
     },
     "resources": [
         {
@@ -43,8 +45,8 @@
                 }
             },
             "dependsOn": [ "keyVaultTemplate" ]
-        },     
-         {
+        },
+        {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "bastionTemplate",
@@ -62,7 +64,7 @@
             "dependsOn": [
                 "networkingTemplate"
             ]
-        },  
+        },
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -73,13 +75,33 @@
                     "uri": "[variables('vmTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parametersLink": {                    
+                "parametersLink": {
                     "uri": "[variables('vmParametersUrl')]",
                     "contentVersion": "1.0.0.0"
                 }
             },
             "dependsOn": [
                 "networkingTemplate"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "postDeploymentTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('postDeploymentTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "primaryScriptUri": "[variables('postDeploymentScriptUrl')]"
+                }
+            },
+            "dependsOn": [
+                "keyVaultTemplate",
+                "networkingTemplate",
+                "vmTemplate"
             ]
         }
     ]
