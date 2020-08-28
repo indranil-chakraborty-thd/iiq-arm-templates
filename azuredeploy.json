@@ -95,7 +95,7 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "primaryScriptUri": "https://raw.githubusercontent.com/indranil-chakraborty-thd/iiq-arm-templates/vault-nw-vms/postDeploymentScript.ps1"
+                    "primaryScriptUri": { "value": "[variables('postDeploymentScriptUrl')]" }
                 }
             },
             "dependsOn": [

@@ -58,7 +58,7 @@
                 "retentionInterval": "P1D",
                 "cleanupPreference": "OnSuccess",
                 "arguments": "[concat('-vaultname', ' ', parameters('vaultName'))]",
-                "primaryScriptUri": "https://raw.githubusercontent.com/indranil-chakraborty-thd/iiq-arm-templates/vault-nw-vms/postDeploymentScript.ps1"
+                "primaryScriptUri": "[parameters('primaryScriptUri')]"
             }
         }
     ],
