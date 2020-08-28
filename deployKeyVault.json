@@ -3,7 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vaultName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[concat(resourceGroup().name, '-vault')]"
         },
         "utcValue": {
             "type": "string",

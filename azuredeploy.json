@@ -22,11 +22,6 @@
                 "templateLink": {
                     "uri": "[variables('keyVaultTemplateUrl')]",
                     "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "vaultName": {
-                        "value": "ixc5ffg-vault"
-                    }
                 }
             }
         },
