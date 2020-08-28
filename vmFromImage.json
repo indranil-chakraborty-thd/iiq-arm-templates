@@ -116,11 +116,6 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('resourceGroup'), '-', parameters('vm_specs')[copyIndex('vmCopy')].vmName, '-nic1'))]"
                         }
                     ]
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true
-                    }
                 }
             }
         }

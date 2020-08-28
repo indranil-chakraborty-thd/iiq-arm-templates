@@ -10,7 +10,7 @@
         "networkingTemplateUrl": "[uri(variables('templateBaseUrl'), 'networking.json')]",
         "networkingParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.json')]",
-        "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.parameters.json')]",
+        "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.parameters.json')]"
     },
     "resources": [
         {
