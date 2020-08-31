@@ -9,7 +9,7 @@
         "imageResourceGroup":{
             "type": "string",
             "defaultValue": "iiq-common"
-        }
+        },
         "adminUsername": {
             "type": "string",
             "metadata": {
