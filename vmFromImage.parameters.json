@@ -16,20 +16,6 @@
                     "location": "eastus",
                     "size": "Standard_B1ms",
                     "osDiskType": "Premium_LRS"
-                },
-                {
-                    "vmName": "iiq-task-1",
-                    "vmHostName": "iiqtask1",
-                    "location": "eastus",
-                    "size": "Standard_B1ms",
-                    "osDiskType": "Premium_LRS"
-                },
-                {
-                    "vmName": "iiq-task-2",
-                    "vmHostName": "iiqtask2",
-                    "location": "eastus",
-                    "size": "Standard_B1ms",
-                    "osDiskType": "Premium_LRS"
                 }
             ]
         },

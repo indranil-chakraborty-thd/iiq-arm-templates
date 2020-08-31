@@ -1,0 +1,1 @@
+az keyvault key create --name $(key-name) --vault-name $(vault-name) --kty EC --curve P-256
