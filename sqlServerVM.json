@@ -4,7 +4,7 @@
     "parameters": {
         "virtualMachineName": {
             "type": "String",
-            "defaultValue": "[concat(resourceGroup().name, '-sql-server-vm')]",
+            "defaultValue": "[concat(resourceGroup().name, '-sql-vm')]",
             "metadata": {
                 "description": "The name of the VM"
             }
