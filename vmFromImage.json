@@ -6,6 +6,10 @@
             "type": "string",
             "defaultValue": "[resourceGroup().name]"
         },
+        "imageResourceGroup":{
+            "type": "string",
+            "defaultValue": "iiq-common"
+        }
         "adminUsername": {
             "type": "string",
             "metadata": {
@@ -100,7 +104,7 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "id": "[resourceId('Microsoft.Compute/images', parameters('vmImageName'))]"
+                        "id": "[resourceId(parameters('imageResourceGroup'), 'Microsoft.Compute/images', parameters('vmImageName'))]"
 
                     },
                     "osDisk": {
