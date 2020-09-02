@@ -306,7 +306,7 @@
             ],
             "properties": {
                 "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
-                "sqlManagement": "Full",
+                "sqlManagement": "LightWeight",
                 "SqlServerLicenseType": "PAYG",
                 "StorageConfigurationSettings": {
                     "DiskConfigurationType": "[variables('diskConfigurationType')]",
