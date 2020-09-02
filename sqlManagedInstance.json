@@ -7,17 +7,26 @@
             "defaultValue": "[concat(resourceGroup().name, '-sql-managed-instance')]",
             "type": "String"
         },
-        "vNetName":{
+        "vNetName": {
             "type": "string",
+            "defaultValue": "[concat(resourceGroup().name, '-iiq-vnet')]",
             "metadata": {
                 "description": "The name of the VNet to which the NIC for the VMs will be attached to."
             }
         },
-        "subnetName":{
+        "subnetName": {
             "type": "string",
+            "defaultValue": "dbSubnet",
             "metadata": {
                 "description": "The name of the subnet of the VNet to which the NIC for the VMs will be attached to."
             }
+        },
+        "administratorLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the administrator for this managed instance"
+            },
+            "defaultValue": "sql-admin"
         }
     },
     "variables": {
@@ -36,7 +45,7 @@
                 "capacity": 8
             },
             "properties": {
-                "administratorLogin": "iiqdevadmin",
+                "administratorLogin": "[parameters('administratorLogin')]",
                 "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), parameters('subnetName'))]",
                 "licenseType": "BasePrice",
                 "vCores": 2,
@@ -45,20 +54,6 @@
                 "publicDataEndpointEnabled": false,
                 "proxyOverride": "Proxy",
                 "timezoneId": "UTC"
-            }
-        },
-        {
-            "type": "Microsoft.Sql/managedInstances/administrators",
-            "apiVersion": "2017-03-01-preview",
-            "name": "[concat(parameters('instance_name'), '/ActiveDirectory')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Sql/managedInstances', parameters('instance_name'))]"
-            ],
-            "properties": {
-                "administratorType": "ActiveDirectory",
-                "login": "AZ_SQL_DBAS",
-                "sid": "6441d149-a161-488e-b003-98ec31e6c2f5",
-                "tenantId": "fb7e6711-b619-4fbe-afe6-f83b12673323"
             }
         },
         {
@@ -83,31 +78,6 @@
             ],
             "properties": {
                 "collation": "SQL_Latin1_General_CP1_CI_AS"
-            }
-        },
-        {
-            "type": "Microsoft.Sql/managedInstances/encryptionProtector",
-            "apiVersion": "2017-10-01-preview",
-            "name": "[concat(parameters('instance_name'), '/current')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Sql/managedInstances', parameters('instance_name'))]"
-            ],
-            "kind": "servicemanaged",
-            "properties": {
-                "serverKeyName": "ServiceManaged",
-                "serverKeyType": "ServiceManaged"
-            }
-        },
-        {
-            "type": "Microsoft.Sql/managedInstances/keys",
-            "apiVersion": "2017-10-01-preview",
-            "name": "[concat(parameters('instance_name'), '/ServiceManaged')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Sql/managedInstances', parameters('instance_name'))]"
-            ],
-            "kind": "servicemanaged",
-            "properties": {
-                "serverKeyType": "ServiceManaged"
             }
         }
     ]
