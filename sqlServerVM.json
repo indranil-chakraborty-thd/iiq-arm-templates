@@ -271,7 +271,27 @@
                         "provisionVmAgent": true
                     }
                 }
-            }
+            },
+            "resources": [
+                {
+                    "name": "string",
+                    "type": "extensions",
+                    "apiVersion": "2019-03-01",
+                    "location": "string",
+                    "tags": {},
+                    "properties": {
+                        "type": "SqlIaaSAgent",
+                        "publisher": "Microsoft.SqlServer.Management",
+                        "typeHandlerVersion": "1.2",
+                        "autoUpgradeMinorVersion": "true",
+                        "settings": {},
+                        "protectedSettings": {
+                            "SQLAuthUpdateUserName": "[parameters('sqlAuthenticationLogin')]",
+                            "SQLAuthUpdatePassword": "[parameters('sqlAuthenticationPassword')]"
+                        }
+                    }
+                }
+            ]
         },
         {
             "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
@@ -301,30 +321,7 @@
                     }
                 }
             }
-        },
-        {
-            "apiVersion": "2019-07-01",
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('virtualMachineName'), '/SqlIaasExtension')]",
-            "location": "[parameters('location')]",
-            "tags": {
-                "displayName": "SQLIaas VM Extension"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.SqlVirtualMachine/SqlVirtualMachines', parameters('virtualMachineName'))]"
-            ],
-            "properties": {
-                "type": "SqlIaaSAgent",
-                "publisher": "Microsoft.SqlServer.Management",
-                "typeHandlerVersion": "1.2",
-                "autoUpgradeMinorVersion": "true",
-                "settings": {
-                    "protectedSettings": {
-                        "SQLAuthUpdateUserName": "[parameters('sqlAuthenticationLogin')]",
-                        "SQLAuthUpdatePassword": "[parameters('sqlAuthenticationPassword')]"
-                    }
-                }
-            }
+
         }
     ],
     "outputs": {
