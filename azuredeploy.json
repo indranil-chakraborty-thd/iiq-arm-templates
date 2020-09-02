@@ -14,7 +14,6 @@
         "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.json')]",
         "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.parameters.json')]",
         "sqlMITemplateUrl": "[uri(variables('templateBaseUrl'), 'sqlManagedInstance.json')]",
-        "sqlMIParametersUrl": "[uri(variables('templateBaseUrl'), 'sqlManagedInstance.parameters.json')]",
         "postDeploymentTemplateUrl": "[uri(variables('templateBaseUrl'), 'postDeploymentTasks.json')]",
         "postDeploymentScriptUrl": "[uri(variables('templateBaseUrl'), 'postDeploymentScript.ps1')]"
     },
@@ -96,10 +95,7 @@
                     "uri": "[variables('sqlMITemplateUrl')]",
                     "contentVersion": "1.0.0.0"
                 },
-                "parametersLink": {
-                    "uri": "[variables('sqlMIParametersUrl')]",
-                    "contentVersion": "1.0.0.0"
-                }
+                "parameters": {}
             },
             "dependsOn": [
                 "keyVaultTemplate",
