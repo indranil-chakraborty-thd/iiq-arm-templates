@@ -77,10 +77,10 @@
         {
             "type": "Microsoft.Sql/managedInstances/databases",
             "apiVersion": "2020-02-02-preview",
-            "name": "[concat(parameters('instanceNameSuffix'), '/identityiq')]",
+            "name": "[concat(variables('instanceName'), '/identityiq')]",
             "location": "eastus",
             "dependsOn": [
-                "[resourceId('Microsoft.Sql/managedInstances', parameters('instanceNameSuffix'))]"
+                "[resourceId('Microsoft.Sql/managedInstances', variables('instanceName'))]"
             ],
             "properties": {
                 "collation": "SQL_Latin1_General_CP1_CI_AS"
@@ -89,10 +89,10 @@
         {
             "type": "Microsoft.Sql/managedInstances/databases",
             "apiVersion": "2020-02-02-preview",
-            "name": "[concat(parameters('instanceNameSuffix'), '/identityiqPlugin')]",
+            "name": "[concat(variables('instanceName'), '/identityiqPlugin')]",
             "location": "eastus",
             "dependsOn": [
-                "[resourceId('Microsoft.Sql/managedInstances', parameters('instanceNameSuffix'))]"
+                "[resourceId('Microsoft.Sql/managedInstances', variables('instanceName'))]"
             ],
             "properties": {
                 "collation": "SQL_Latin1_General_CP1_CI_AS"
