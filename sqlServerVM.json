@@ -82,6 +82,18 @@
                 "description": "The admin password of the VM"
             }
         },
+        "sqlAuthenticationLogin": {
+            "type": "String",
+            "metadata": {
+                "description": "The admin user name of the VM"
+            }
+        },
+        "sqlAuthenticationPassword": {
+            "type": "SecureString",
+            "metadata": {
+                "description": "The admin password of the VM"
+            }
+        },
         "storageWorkloadType": {
             "type": "String",
             "allowedValues": [
@@ -136,7 +148,7 @@
     },
     "variables": {
         "networkInterfaceName": "[concat(parameters('virtualMachineName'), '-nic')]",
-        "networkSecurityGroupName": "[concat(parameters('virtualMachineName'), '-nsg')]",       
+        "networkSecurityGroupName": "[concat(parameters('virtualMachineName'), '-nsg')]",
         "diskConfigurationType": "NEW",
         "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
         "subnetRef": "[resourceID(parameters('existingVNetResourceGroup'), 'Microsoft.Network/virtualNetWorks/subnets', parameters('existingVirtualNetworkName'), parameters('existingSubNetName'))]",
@@ -147,17 +159,44 @@
             "caching": "ReadOnly",
             "writeAcceleratorEnabled": false,
             "storageAccountType": "Premium_LRS",
-            "diskSizeGB": 1023
+            "diskSizeGB": 64
         },
         "tempDbPath": "D:\\SQLTemp"
     },
-    "resources": [        
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[variables('networkSecurityGroupName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-sql",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "1433",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1500,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2018-10-01",
             "name": "[variables('networkInterfaceName')]",
             "location": "[parameters('location')]",
-            "dependsOn": [],
+            "dependsOn": [ "[variables('nsgId')]" ],
             "properties": {
                 "ipConfigurations": [
                     {
@@ -166,7 +205,9 @@
                             "subnet": {
                                 "id": "[variables('subnetRef')]"
                             },
-                            "privateIPAllocationMethod": "Dynamic"                            
+                            "privateIPAllocationMethod": "Dynamic",
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
                         }
                     }
                 ]
@@ -257,6 +298,30 @@
                     },
                     "SQLTempDbSettings": {
                         "DefaultFilePath": "[variables('tempDbPath')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('virtualMachineName'), '/SqlIaasExtension')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "SQLIaas VM Extension"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.SqlVirtualMachine/SqlVirtualMachines', parameters('virtualMachineName'))]"
+            ],
+            "properties": {
+                "type": "SqlIaaSAgent",
+                "publisher": "Microsoft.SqlServer.Management",
+                "typeHandlerVersion": "1.2",
+                "autoUpgradeMinorVersion": "true",
+                "settings": {
+                    "protectedSettings": {
+                        "SQLAuthUpdateUserName": "[parameters('sqlAuthenticationLogin')]",
+                        "SQLAuthUpdatePassword": "[parameters('sqlAuthenticationPassword')]"
                     }
                 }
             }

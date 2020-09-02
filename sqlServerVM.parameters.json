@@ -6,9 +6,15 @@
             "value": "dbSubnet"
         },
         "adminUsername": {
-            "value": "sql-server-admin"
+            "value": "sql-vm-admin"
         },
         "adminPassword": {
+            "value": "Welcome123$56" 
+        },
+        "sqlAuthenticationLogin": {
+            "value": "sql-admin"
+        },
+        "sqlAuthenticationPassword": {
             "value": "Welcome123$56" 
         }
     }
