@@ -1,0 +1,133 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroup": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "imageResourceGroup":{
+            "type": "string",
+            "defaultValue": "iiq-common"
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies a username for the Virtual Machine."
+            },
+            "defaultValue": "[concat(resourceGroup().name, '-iiq-admin')]"
+        },
+        "adminPublicKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Specifies the SSH rsa public key file as a string. Use \"ssh-keygen -t rsa -b 2048\" to generate your SSH key pairs."
+            }
+        },
+        "vm_specs": {
+            "type": "array"
+        },
+        "vmImageName":{
+            "type": "string",
+            "defaultValue": "iiq81-centos8-java11-tomcat9"
+        },
+        "vNetName":{
+            "type": "string",
+            "metadata": {
+                "description": "The name of the VNet to which the NIC for the VMs will be attached to."
+            }
+        },
+        "subnetName":{
+            "type": "string",
+            "metadata": {
+                "description": "The name of the subnet of the VNet to which the NIC for the VMs will be attached to."
+            }
+        }
+    },
+    "variables": {
+        "vNetName": "[concat(parameters('resourceGroup'), '-', parameters('VNetName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "copy": {
+                "name": "vmCopy",
+                "count": "[length(parameters('vm_specs'))]"
+            },
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('resourceGroup'), '-', parameters('vm_specs')[copyIndex('vmCopy')].vmName, '-nic1')]",
+            "location": "[parameters('vm_specs')[copyIndex('vmCopy')].location]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), parameters('subnetName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-10-01",
+            "copy": {
+                "name": "vmCopy",
+                "count": "[length(parameters('vm_specs'))]"
+            },
+            "name": "[parameters('vm_specs')[copyIndex('vmCopy')].vmName]",
+            "location": "[parameters('vm_specs')[copyIndex('vmCopy')].location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('resourceGroup'), '-', parameters('vm_specs')[copyIndex('vmCopy')].vmName, '-nic1'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vm_specs')[copyIndex('vmCopy')].size]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('vm_specs')[copyIndex('vmCopy')].vmHostName]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                                    "keyData": "[parameters('adminPublicKey')]"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "id": "[resourceId('9cd59a98-f6d0-4d81-be04-af44ee7ad221', parameters('imageResourceGroup'), 'Microsoft.Compute/images', parameters('vmImageName'))]"
+
+                    },
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('vm_specs')[copyIndex('vmCopy')].osDiskType]"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('resourceGroup'), '-', parameters('vm_specs')[copyIndex('vmCopy')].vmName, '-nic1'))]"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "adminUsername": {
+            "type": "string",
+            "value": "[parameters('adminUsername')]"
+        }
+    }
+}

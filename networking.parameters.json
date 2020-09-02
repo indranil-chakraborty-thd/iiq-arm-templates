@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "VNetName": {
+            "value": "iiq-vnet"
+        },
+        "VNetAddressPrefix": {
+            "value": "10.124.0.0/25"
+        },
+        "subnets": {
+            "value": [
+                {
+                    "name": "appSubnet",
+                    "addressPrefix": "10.124.0.32/27"
+                },
+                {
+                    "name": "dbSubnet",
+                    "addressPrefix": "10.124.0.64/27"
+                },
+                {
+                    "name": "AzureBastionSubnet",
+                    "addressPrefix": "10.124.0.96/27"
+                }
+            ]
+        }
+    }
+}

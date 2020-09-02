@@ -1,0 +1,102 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+
+        "instanceNameSuffix": {
+            "defaultValue": "sql-mi",
+            "type": "string",
+            "metadata": {
+                "description": "The suffix for the SQL Managed Instance name."
+            }
+        },
+        "vNetNameSuffix": {
+            "type": "string",
+            "defaultValue": "iiq-vnet",
+            "metadata": {
+                "description": "The suffix for the vNet to which this SQL Managed Instance will be attached to."
+            }
+        },
+        "dbSubnetName": {
+            "type": "string",
+            "defaultValue": "dbSubnet",
+            "metadata": {
+                "description": "The name of the subnet of the VNet to which the NIC for the SQL MI will be attached to."
+            }
+        },
+        "administratorLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the administrator for this managed instance"
+            },
+            "defaultValue": "sql-admin"
+        },
+        "vCores": {
+            "type": "string",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "The number of vCores that the SQL MI should contain."
+            }
+        },
+         "storageSizeInGB": {
+            "type": "string",
+            "defaultValue": 2176,
+            "metadata": {
+                "description": "The storage size, in GB, for the SQL MI"
+            }
+        }
+    },
+    "variables": {
+        "vNetName": "[concat(resourceGroup().name, '-', parameters('vNetNameSuffix'))]",
+        "instanceName": "[concat(resourceGroup().name, '-', parameters('instanceNameSuffix'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Sql/managedInstances",
+            "apiVersion": "2018-06-01-preview",
+            "name": "[variables('instanceName')]",
+            "location": "eastus",
+            "sku": {
+                "name": "GP_Gen5",
+                "tier": "GeneralPurpose",
+                "family": "Gen5",
+                "capacity": 8
+            },
+            "properties": {
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "subnetId": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vNetName')), '/subnets/', parameters('dbSubnetName'))]",
+                "licenseType": "BasePrice",
+                "vCores": "[parameters('vCores')]",
+                "storageSizeInGB":"[parameters('storageSizeInGB')]",
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "publicDataEndpointEnabled": false,
+                "proxyOverride": "Proxy",
+                "timezoneId": "UTC"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances/databases",
+            "apiVersion": "2020-02-02-preview",
+            "name": "[concat(parameters('instanceNameSuffix'), '/identityiq')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/managedInstances', parameters('instanceNameSuffix'))]"
+            ],
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances/databases",
+            "apiVersion": "2020-02-02-preview",
+            "name": "[concat(parameters('instanceNameSuffix'), '/identityiqPlugin')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/managedInstances', parameters('instanceNameSuffix'))]"
+            ],
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS"
+            }
+        }
+    ]
+}

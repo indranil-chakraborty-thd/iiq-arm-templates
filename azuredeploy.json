@@ -1,0 +1,131 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+
+    },
+    "variables": {
+        "templateBaseUrl": "https://raw.githubusercontent.com/indranil-chakraborty-thd/iiq-arm-templates/vault-nw-vm-sqlmi/",
+        "keyVaultTemplateUrl": "[uri(variables('templateBaseUrl'), 'deployKeyVault.json')]",
+        "networkingTemplateUrl": "[uri(variables('templateBaseUrl'), 'networking.json')]",
+        "networkingParametersUrl": "[uri(variables('templateBaseUrl'), 'networking.parameters.json')]",
+        "bastionTemplateUrl": "[uri(variables('templateBaseUrl'), 'bastion.json')]",
+        "bastionParametersUrl": "[uri(variables('templateBaseUrl'), 'bastion.parameters.json')]",
+        "vmTemplateUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.json')]",
+        "vmParametersUrl": "[uri(variables('templateBaseUrl'), 'vmFromImage.parameters.json')]",
+        "sqlMITemplateUrl": "[uri(variables('templateBaseUrl'), 'sqlManagedInstance.json')]",
+        "sqlMIParametersUrl": "[uri(variables('templateBaseUrl'), 'sqlManagedInstance.parameters.json')]",
+        "postDeploymentTemplateUrl": "[uri(variables('templateBaseUrl'), 'postDeploymentTasks.json')]",
+        "postDeploymentScriptUrl": "[uri(variables('templateBaseUrl'), 'postDeploymentScript.ps1')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "keyVaultTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('keyVaultTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "networkingTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('networkingTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('networkingParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            },
+            "dependsOn": [ "keyVaultTemplate" ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "bastionTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('bastionTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('bastionParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            },
+            "dependsOn": [
+                "networkingTemplate"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "vmTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('vmParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            },
+            "dependsOn": [
+                "networkingTemplate"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "sqlServerDeployment",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlMITemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('sqlMIParametersUrl')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            },
+            "dependsOn": [
+                "keyVaultTemplate",
+                "networkingTemplate",
+                "vmTemplate"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "postDeploymentTemplate",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('postDeploymentTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "primaryScriptUri": { "value": "[variables('postDeploymentScriptUrl')]" }
+                }
+            },
+            "dependsOn": [
+                "keyVaultTemplate",
+                "networkingTemplate",
+                "vmTemplate"
+            ]
+        }
+    ]
+}
