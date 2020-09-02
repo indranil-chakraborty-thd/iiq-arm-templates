@@ -274,7 +274,7 @@
             },
             "resources": [
                 {
-                    "name": "string",
+                    "name": "SqlIaasExtension",
                     "type": "extensions",
                     "apiVersion": "2019-07-01",
                     "location": "[parameters('location')]",
