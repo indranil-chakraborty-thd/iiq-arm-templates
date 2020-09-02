@@ -1,0 +1,114 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+
+        "instance_name": {
+            "defaultValue": "[concat(resourceGroup().name, '-sql-managed-instance')]",
+            "type": "String"
+        },
+        "vNetName":{
+            "type": "string",
+            "metadata": {
+                "description": "The name of the VNet to which the NIC for the VMs will be attached to."
+            }
+        },
+        "subnetName":{
+            "type": "string",
+            "metadata": {
+                "description": "The name of the subnet of the VNet to which the NIC for the VMs will be attached to."
+            }
+        }
+    },
+    "variables": {
+        "vNetName": "[concat(resourceGroup().name, '-', parameters('VNetName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Sql/managedInstances",
+            "apiVersion": "2018-06-01-preview",
+            "name": "[parameters('instance_name')]",
+            "location": "eastus",
+            "sku": {
+                "name": "GP_Gen5",
+                "tier": "GeneralPurpose",
+                "family": "Gen5",
+                "capacity": 8
+            },
+            "properties": {
+                "administratorLogin": "iiqdevadmin",
+                "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), parameters('subnetName'))]",
+                "licenseType": "BasePrice",
+                "vCores": 2,
+                "storageSizeInGB": 2176,
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "publicDataEndpointEnabled": false,
+                "proxyOverride": "Proxy",
+                "timezoneId": "UTC"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances/administrators",
+            "apiVersion": "2017-03-01-preview",
+            "name": "[concat(parameters('instance_name'), '/ActiveDirectory')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/managedInstances', parameters('instance_name'))]"
+            ],
+            "properties": {
+                "administratorType": "ActiveDirectory",
+                "login": "AZ_SQL_DBAS",
+                "sid": "6441d149-a161-488e-b003-98ec31e6c2f5",
+                "tenantId": "fb7e6711-b619-4fbe-afe6-f83b12673323"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances/databases",
+            "apiVersion": "2020-02-02-preview",
+            "name": "[concat(parameters('instance_name'), '/identityiq')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/managedInstances', parameters('instance_name'))]"
+            ],
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances/databases",
+            "apiVersion": "2020-02-02-preview",
+            "name": "[concat(parameters('instance_name'), '/identityiqPlugin')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/managedInstances', parameters('instance_name'))]"
+            ],
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances/encryptionProtector",
+            "apiVersion": "2017-10-01-preview",
+            "name": "[concat(parameters('instance_name'), '/current')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/managedInstances', parameters('instance_name'))]"
+            ],
+            "kind": "servicemanaged",
+            "properties": {
+                "serverKeyName": "ServiceManaged",
+                "serverKeyType": "ServiceManaged"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/managedInstances/keys",
+            "apiVersion": "2017-10-01-preview",
+            "name": "[concat(parameters('instance_name'), '/ServiceManaged')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/managedInstances', parameters('instance_name'))]"
+            ],
+            "kind": "servicemanaged",
+            "properties": {
+                "serverKeyType": "ServiceManaged"
+            }
+        }
+    ]
+}
