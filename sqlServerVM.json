@@ -279,6 +279,9 @@
                     "apiVersion": "2019-07-01",
                     "location": "[parameters('location')]",
                     "tags": {},
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+                    ],
                     "properties": {
                         "type": "SqlIaaSAgent",
                         "publisher": "Microsoft.SqlServer.Management",
