@@ -32,15 +32,15 @@
             "defaultValue": "sql-admin"
         },
         "vCores": {
-            "type": "string",
-            "defaultValue": "2",
+            "type": "int",
+            "defaultValue": 2,
             "metadata": {
                 "description": "The number of vCores that the SQL MI should contain."
             }
         },
          "storageSizeInGB": {
-            "type": "string",
-            "defaultValue": "2176",
+            "type": "int",
+            "defaultValue": 2176,
             "metadata": {
                 "description": "The storage size, in GB, for the SQL MI"
             }
