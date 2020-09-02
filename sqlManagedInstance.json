@@ -30,7 +30,7 @@
         }
     },
     "variables": {
-        "vNetName": "[concat(resourceGroup().name, '-', parameters('VNetName'))]"
+        
     },
     "resources": [
         {
@@ -46,7 +46,7 @@
             },
             "properties": {
                 "administratorLogin": "[parameters('administratorLogin')]",
-                "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), parameters('subnetName'))]",
+                "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetName'), parameters('subnetName'))]",
                 "licenseType": "BasePrice",
                 "vCores": 2,
                 "storageSizeInGB": 2176,
