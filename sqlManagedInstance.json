@@ -40,7 +40,7 @@
         },
          "storageSizeInGB": {
             "type": "string",
-            "defaultValue": 2176,
+            "defaultValue": "2176",
             "metadata": {
                 "description": "The storage size, in GB, for the SQL MI"
             }
