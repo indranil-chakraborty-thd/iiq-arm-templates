@@ -33,7 +33,7 @@
         },
         "vCores": {
             "type": "string",
-            "defaultValue": 2,
+            "defaultValue": "2",
             "metadata": {
                 "description": "The number of vCores that the SQL MI should contain."
             }
